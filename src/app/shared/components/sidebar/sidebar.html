@@ -1,0 +1,51 @@
+<aside class="sidebar">
+  <!-- Logo -->
+  <div class="logo-area">
+    <div class="logo-icon">
+      <svg width="22" height="17" viewBox="0 0 32 24" fill="none">
+        <path d="M2 4C2 3 3 2 4 2L14 3C15 3.2 16 4 16 5L16 22C16 21 15 20.2 14 20L4 19C3 19 2 19.5 2 20Z"
+              stroke="white" stroke-width="1.6" fill="none" stroke-linejoin="round"/>
+        <path d="M30 4C30 3 29 2 28 2L18 3C17 3.2 16 4 16 5L16 22C16 21 17 20.2 18 20L28 19C29 19 30 19.5 30 20Z"
+              stroke="white" stroke-width="1.6" fill="none" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-name">BookHub</div>
+      <div class="logo-tagline">BIBLIOTHÈQUE</div>
+    </div>
+  </div>
+
+  <!-- Navigation principale -->
+  <nav class="nav-main">
+    @for (item of navItems; track item.route) {
+      <a [routerLink]="item.route" routerLinkActive="nav-item--active" class="nav-item">
+        <app-icon [name]="item.icon" [size]="18" />
+        <span class="nav-label">{{ item.label }}</span>
+        @if (item.count) {
+          <span class="nav-badge">{{ item.count }}</span>
+        }
+      </a>
+    }
+  </nav>
+
+  <div class="divider"></div>
+
+  <!-- Navigation secondaire -->
+  <nav class="nav-secondary">
+    @for (item of bottomItems; track item.route) {
+      <a [routerLink]="item.route" class="nav-item nav-item--muted">
+        <app-icon [name]="item.icon" [size]="18" />
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+
+  <!-- Profil utilisateur -->
+  <div class="user-card">
+    <div class="avatar">AG</div>
+    <div class="user-info">
+      <div class="user-name">Alex Garcia</div>
+      <div class="user-role">Membre · depuis 2023</div>
+    </div>
+  </div>
+</aside>

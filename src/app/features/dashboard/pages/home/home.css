@@ -1,0 +1,15 @@
+.page-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 32px;
+  color: #1E1E2D;
+  letter-spacing: -0.6px;
+  margin: 0;
+}
+
+.page-subtitle {
+  font-family: 'Inter', sans-serif;
+  color: #5C5B6B;
+  font-size: 15px;
+  margin: 6px 0 0;
+}
