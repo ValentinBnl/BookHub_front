@@ -1,4 +1,100 @@
-<div>
-  <h1 class="page-title">Bonjour, Alex 👋</h1>
-  <p class="page-subtitle">Qu'allez-vous découvrir aujourd'hui ?</p>
+<div class="home">
+
+  <div class="page-header">
+    <div>
+      <h1 class="greeting">Bonjour, Alex 👋</h1>
+      <p class="greeting-sub">Qu'allez-vous découvrir aujourd'hui ?</p>
+    </div>
+    <a routerLink="/catalog" class="btn-catalog">
+      <app-icon name="arrow-right" [size]="15" />
+      Voir le catalogue
+    </a>
+  </div>
+
+  <div class="stats-row">
+    @for (stat of stats; track stat.label) {
+      <div class="stat-card">
+        <div class="stat-icon">
+          <app-icon [name]="stat.icon" [size]="18" />
+        </div>
+        <div class="stat-value">{{ stat.value }}</div>
+        <div class="stat-label">{{ stat.label }}</div>
+      </div>
+    }
+  </div>
+
+  <section class="section">
+    <div class="section-head">
+      <h2 class="section-title">Nouveautés</h2>
+      <a routerLink="/catalog" class="see-all">
+        Voir tout <app-icon name="chevron-right" [size]="14" />
+      </a>
+    </div>
+
+    @if (loading()) {
+      <div class="books-grid">
+        @for (_ of [1, 2, 3, 4, 5]; track $index) {
+          <div class="book-skeleton"></div>
+        }
+      </div>
+    } @else {
+      <div class="books-grid">
+        @for (book of books(); track book.id) {
+          <div class="book-card">
+            <div class="book-cover">
+              <div class="cover-default">
+                <app-icon name="book" [size]="36" />
+              </div>
+              @if (book.urlCouverture) {
+                <img
+                  [src]="book.urlCouverture"
+                  [alt]="book.titre"
+                  class="cover-img"
+                  (error)="onImgError($event)"
+                  loading="lazy"
+                />
+              }
+              <button class="bookmark-btn" aria-label="Mettre en favori">
+                <app-icon name="bookmark" [size]="13" />
+              </button>
+            </div>
+            <div class="book-info">
+              <p class="book-title">{{ book.titre }}</p>
+              <p class="book-author">{{ book.auteur }}</p>
+              <span
+                class="badge"
+                [class.badge--available]="book.exemplairesDisponibles > 0"
+                [class.badge--borrowed]="book.exemplairesDisponibles === 0"
+              >
+                {{ book.exemplairesDisponibles > 0 ? 'Disponible' : 'En cours' }}
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  <div class="bottom-grid">
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">Sélection du mois</h2>
+        <a routerLink="/catalog" class="see-all">
+          Voir tout <app-icon name="chevron-right" [size]="14" />
+        </a>
+      </div>
+      <div class="placeholder-block">À venir</div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">Mes emprunts</h2>
+        <a routerLink="/loans" class="see-all">
+          Voir tout <app-icon name="chevron-right" [size]="14" />
+        </a>
+      </div>
+      <div class="placeholder-block">À venir</div>
+    </section>
+  </div>
+
 </div>
