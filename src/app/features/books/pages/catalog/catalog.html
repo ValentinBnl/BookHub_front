@@ -1,1 +1,134 @@
-<p>catalog works!</p>
+<div class="page">
+  <!-- Breadcrumb + En-tête -->
+  <div class="page-header">
+    <div class="breadcrumb">
+      ACCUEIL <span class="breadcrumb-sep">/</span> CATALOGUE
+    </div>
+
+    <div class="title-row">
+      <div>
+        <h1 class="page-title">Catalogue</h1>
+        <p class="page-subtitle">
+          <strong>{{ totalCount() }}</strong>
+          {{ totalCount() > 1 ? 'ouvrages trouvés' : 'ouvrage trouvé' }}
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <div class="view-toggle">
+          <button class="view-btn" [class.view-btn--active]="activeView() === 'grid'"
+            (click)="setView('grid')" type="button">
+            <app-icon name="grid" [size]="14" /> Grille
+          </button>
+          <button class="view-btn" [class.view-btn--active]="activeView() === 'list'"
+            (click)="setView('list')" type="button">
+            <app-icon name="list" [size]="14" /> Liste
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres rapides -->
+  <div class="quick-filters">
+    @for (cat of categories(); track cat) {
+      <button class="filter-pill" [class.filter-pill--active]="activeCategory() === cat"
+        (click)="setCategory(cat)" type="button">
+        {{ cat }}
+      </button>
+    }
+  </div>
+
+  <!-- Grille principale -->
+  <div class="content-grid">
+    <!-- Facettes -->
+    <aside class="facets">
+      <!-- Disponibilité -->
+      <div class="facet-group">
+        <div class="facet-header">
+          <span class="facet-title">Disponibilité</span>
+          <app-icon name="chevron-down" [size]="14" />
+        </div>
+        @for (opt of availabilityOptions; track opt.disponible) {
+          <label class="facet-row">
+            <span class="checkbox" [class.checkbox--checked]="isAvailabilityChecked(opt.disponible)"
+              (click)="toggleAvailability(opt.disponible)">
+              @if (isAvailabilityChecked(opt.disponible)) {
+                <app-icon name="check" [size]="10" [strokeWidth]="3" />
+              }
+            </span>
+            <span class="facet-label">{{ opt.label }}</span>
+          </label>
+        }
+      </div>
+
+      <!-- Année -->
+      <div class="facet-group">
+        <div class="facet-header">
+          <span class="facet-title">Année de parution</span>
+          <app-icon name="chevron-down" [size]="14" />
+        </div>
+        <div class="dual-range">
+          <div class="dual-range-track" [style.background]="trackFill()"></div>
+          <input type="range" class="range-input"
+            [min]="YEAR_MIN" [max]="YEAR_MAX"
+            [value]="yearMin()"
+            (input)="setYearMin($event)" />
+          <input type="range" class="range-input"
+            [min]="YEAR_MIN" [max]="YEAR_MAX"
+            [value]="yearMax()"
+            (input)="setYearMax($event)" />
+        </div>
+        <div class="range-labels">
+          <span>{{ yearMin() }}</span>
+          <span>{{ yearMax() }}</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Résultats -->
+    <div class="results">
+      <div class="results-meta">
+        <span>
+          <strong>{{ totalCount() }}</strong> résultat{{ totalCount() > 1 ? 's' : '' }}
+        </span>
+        <label class="sort-label">
+          Trier par&nbsp;
+          <select class="sort-select" (change)="setSort($event)">
+            <option value="title-asc">Titre (A → Z)</option>
+            <option value="author-asc">Auteur (A → Z)</option>
+            <option value="year-desc">Plus récent</option>
+            <option value="year-asc">Plus ancien</option>
+          </select>
+        </label>
+      </div>
+
+      @if (books().length === 0) {
+        <p class="no-results">Aucun livre ne correspond à ces critères.</p>
+      } @else {
+        <div class="books-grid" [class.books-grid--list]="activeView() === 'list'">
+          @for (book of books(); track book.key) {
+            <app-book-card [book]="book" />
+          }
+        </div>
+      }
+
+      @if (totalPages() > 1) {
+        <div class="pagination">
+          <button class="page-btn" (click)="prevPage()" [disabled]="currentPage() === 1">‹</button>
+          @for (p of paginationPages(); track $index) {
+            <button class="page-btn"
+              [class.page-btn--active]="p === currentPage()"
+              [class.page-btn--ellipsis]="p === '…'"
+              [disabled]="p === '…'"
+              (click)="goToPage(p)">
+              {{ p }}
+            </button>
+          }
+          <button class="page-btn" (click)="nextPage()" [disabled]="currentPage() === totalPages()">›</button>
+        </div>
+      }
+    </div>
+  </div>
+</div>

@@ -4,7 +4,8 @@ export type IconName =
   | 'home' | 'catalog' | 'borrow' | 'settings' | 'logout'
   | 'search' | 'bell' | 'profile' | 'heart' | 'history'
   | 'bookmark' | 'clock' | 'star' | 'plus' | 'users'
-  | 'book' | 'chevron-right' | 'arrow-right' | 'check';
+  | 'book' | 'chevron-right' | 'chevron-down' | 'arrow-right' | 'check'
+  | 'grid' | 'list';
 
 @Component({
   selector: 'app-icon',
