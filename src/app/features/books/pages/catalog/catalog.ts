@@ -1,35 +1,36 @@
-import { Component, signal, computed } from '@angular/core';
-import { Book, BookStatus } from '../../../../shared/models/book.model';
+import { Component, computed, inject, signal } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { catchError, debounceTime, map, of, switchMap } from 'rxjs';
+import { BookService, BookFilter, SortField, SortDirection } from '../../../../core/services/book';
+import { CategoryService } from '../../../../core/services/category';
 import { BookCardComponent } from '../../components/book-card/book-card';
 import { IconComponent } from '../../../../shared/components/icon/icon';
 
 type SortOption = 'title-asc' | 'author-asc' | 'year-desc' | 'year-asc';
 
-const BOOKS_PER_PAGE = 8;
+interface AvailabilityOption {
+  disponible: boolean;
+  label: string;
+}
 
-const STATUS_LABELS: Record<BookStatus, string> = {
-  available: 'Disponible',
-  borrowed:  'Emprunté',
-  late:      'En retard',
-  upcoming:  'Réservé',
+const BOOKS_PER_PAGE = 8;
+const YEAR_MIN = 1800;
+const YEAR_MAX = new Date().getFullYear();
+
+const EMPTY_PAGE = { books: [], totalPages: 1, totalElements: 0 };
+
+const SORT_MAP: Record<SortOption, { sortBy: SortField; direction: SortDirection }> = {
+  'title-asc':  { sortBy: 'titre',        direction: 'asc'  },
+  'author-asc': { sortBy: 'auteur',       direction: 'asc'  },
+  'year-desc':  { sortBy: 'dateParution', direction: 'desc' },
+  'year-asc':   { sortBy: 'dateParution', direction: 'asc'  },
 };
 
-const ALL_BOOKS: Book[] = [
-  { key: 'ombre',    title: "L'ombre du vent",           author: 'Carlos Ruiz Zafón',        category: 'Romans',  year: 2001, pages: 576, status: 'available', language: 'Espagnol' },
-  { key: 'carpates', title: 'Le Château des Carpathes',  author: 'Jules Verne',              category: 'Romans',  year: 1892, pages: 240, status: 'available', language: 'Français' },
-  { key: '1984',     title: '1984',                      author: 'George Orwell',            category: 'Romans',  year: 1949, pages: 328, status: 'borrowed',  language: 'Anglais'  },
-  { key: 'dune',     title: 'Dune',                      author: 'Frank Herbert',            category: 'Romans',  year: 1965, pages: 688, status: 'available', language: 'Anglais'  },
-  { key: 'sapiens',  title: 'Sapiens',                   author: 'Yuval Noah Harari',        category: 'Essais',  year: 2011, pages: 512, status: 'available', language: 'Français' },
-  { key: 'petit',    title: 'Le Petit Prince',           author: 'Antoine de Saint-Exupéry', category: 'Jeunesse',year: 1943, pages: 96,  status: 'borrowed',  language: 'Français' },
-  { key: 'etranger', title: "L'Étranger",                author: 'Albert Camus',             category: 'Romans',  year: 1942, pages: 184, status: 'available', language: 'Français' },
-  { key: 'peste',    title: 'La Peste',                  author: 'Albert Camus',             category: 'Romans',  year: 1947, pages: 336, status: 'upcoming',  language: 'Français' },
-  { key: 'madame',   title: 'Madame Bovary',             author: 'Gustave Flaubert',         category: 'Romans',  year: 1856, pages: 432, status: 'available', language: 'Français' },
-  { key: 'germinal', title: 'Germinal',                  author: 'Émile Zola',               category: 'Romans',  year: 1885, pages: 592, status: 'borrowed',  language: 'Français' },
-  { key: 'notre',    title: 'Notre-Dame de Paris',       author: 'Victor Hugo',              category: 'Romans',  year: 1831, pages: 640, status: 'available', language: 'Français' },
-  { key: 'orient',   title: "Crime de l'Orient-Express", author: 'Agatha Christie',          category: 'Policier',year: 1934, pages: 256, status: 'available', language: 'Anglais'  },
-];
 
-const CATEGORIES = ['Tous', 'Romans', 'BD', 'Essais', 'Jeunesse', 'Policier', 'Poésie', 'Sciences'];
+const AVAILABILITY_OPTIONS: AvailabilityOption[] = [
+  { disponible: true,  label: 'Disponible'       },
+  { disponible: false, label: 'Rupture de stock' },
+];
 
 @Component({
   selector: 'app-catalog',
@@ -38,79 +39,73 @@ const CATEGORIES = ['Tous', 'Romans', 'BD', 'Essais', 'Jeunesse', 'Policier', 'P
   styleUrl: './catalog.css',
 })
 export class Catalog {
-  activeCategory  = signal('Tous');
-  activeView      = signal<'grid' | 'list'>('grid');
-  checkedStatuses = signal<Set<BookStatus>>(new Set<BookStatus>());
-  checkedLangs    = signal<Set<string>>(new Set<string>());
-  sortBy          = signal<SortOption>('title-asc');
-  currentPage     = signal(1);
+  private bookService     = inject(BookService);
+  private categoryService = inject(CategoryService);
 
-  categories = CATEGORIES;
+  activeCategory       = signal('Tous');
+  activeView           = signal<'grid' | 'list'>('grid');
+  checkedAvailability  = signal<Set<boolean>>(new Set<boolean>());
+  sortBy               = signal<SortOption>('title-asc');
+  currentPage          = signal(1);
+  yearMin = signal(YEAR_MIN);
+  yearMax = signal(YEAR_MAX);
 
-  // Compteurs dérivés des données réelles
-  availabilityGroups = computed(() => {
-    const counts = new Map<BookStatus, number>();
-    for (const b of ALL_BOOKS) {
-      counts.set(b.status, (counts.get(b.status) ?? 0) + 1);
-    }
-    return (['available', 'borrowed', 'late', 'upcoming'] as BookStatus[])
-      .filter(s => counts.has(s))
-      .map(s => ({ status: s, label: STATUS_LABELS[s], count: counts.get(s)! }));
+  readonly YEAR_MIN = YEAR_MIN;
+  readonly YEAR_MAX = YEAR_MAX;
+
+  trackFill = computed(() => {
+    const range = YEAR_MAX - YEAR_MIN;
+    const l = (((this.yearMin() - YEAR_MIN) / range) * 100).toFixed(1);
+    const r = (((this.yearMax() - YEAR_MIN) / range) * 100).toFixed(1);
+    return `linear-gradient(to right, #EFEAE0 ${l}%, #1F5D4E ${l}%, #1F5D4E ${r}%, #EFEAE0 ${r}%)`;
   });
 
-  languageGroups = computed(() => {
-    const counts = new Map<string, number>();
-    for (const b of ALL_BOOKS) {
-      counts.set(b.language, (counts.get(b.language) ?? 0) + 1);
-    }
-    return [...counts.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .map(([language, count]) => ({ language, count }));
-  });
-
-  // Livres filtrés + triés (sans pagination)
-  filteredBooks = computed(() => {
-    const cat    = this.activeCategory();
-    const avail  = this.checkedStatuses();
-    const lang   = this.checkedLangs();
-    const sort   = this.sortBy();
-
-    const result = ALL_BOOKS.filter(b => {
-      if (cat !== 'Tous' && b.category !== cat)        return false;
-      if (avail.size > 0 && !avail.has(b.status))      return false;
-      if (lang.size > 0  && !lang.has(b.language))     return false;
-      return true;
-    });
-
-    return result.sort((a, b) => {
-      switch (sort) {
-        case 'title-asc':  return a.title.localeCompare(b.title, 'fr');
-        case 'author-asc': return a.author.localeCompare(b.author, 'fr');
-        case 'year-desc':  return b.year - a.year;
-        case 'year-asc':   return a.year - b.year;
-      }
-    });
-  });
-
-  totalPages = computed(() =>
-    Math.max(1, Math.ceil(this.filteredBooks().length / BOOKS_PER_PAGE))
+  categories = toSignal(
+    this.categoryService.getAll().pipe(
+      map(cats => ['Tous', ...cats]),
+      catchError(() => of(['Tous']))
+    ),
+    { initialValue: ['Tous'] }
   );
 
-  // Livres de la page courante
-  books = computed(() => {
-    const start = (this.currentPage() - 1) * BOOKS_PER_PAGE;
-    return this.filteredBooks().slice(start, start + BOOKS_PER_PAGE);
+  availabilityOptions = AVAILABILITY_OPTIONS;
+
+  private filter = computed<BookFilter>(() => {
+    const checked = this.checkedAvailability();
+    // Un seul choix coché → on filtre ; les deux cochés ou aucun → pas de filtre
+    const disponible = checked.size === 1 ? [...checked][0] : undefined;
+
+    return {
+      categorie:  this.activeCategory(),
+      disponible,
+      anneeMin:   this.yearMin() > YEAR_MIN ? this.yearMin() : undefined,
+      anneeMax:   this.yearMax() < YEAR_MAX ? this.yearMax() : undefined,
+      ...SORT_MAP[this.sortBy()],
+      page: this.currentPage() - 1,
+      size: BOOKS_PER_PAGE,
+    };
   });
 
-  // Boutons de pagination calculés dynamiquement
+  private pageData = toSignal(
+    toObservable(this.filter).pipe(
+      debounceTime(300),
+      switchMap(f => this.bookService.getBooks(f).pipe(
+        catchError(() => of(EMPTY_PAGE))
+      ))
+    ),
+    { initialValue: EMPTY_PAGE }
+  );
+
+  books      = computed(() => this.pageData().books);
+  totalPages = computed(() => this.pageData().totalPages);
+  totalCount = computed(() => this.pageData().totalElements);
+  loading    = computed(() => this.pageData() === EMPTY_PAGE && this.currentPage() === 1);
+
   paginationPages = computed((): (number | '…')[] => {
     const total   = this.totalPages();
     const current = this.currentPage();
     if (total <= 1) return [];
-
-    if (total <= 7) {
-      return Array.from({ length: total }, (_, i) => i + 1);
-    }
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
 
     const pages: (number | '…')[] = [1];
     if (current > 3)          pages.push('…');
@@ -127,47 +122,35 @@ export class Catalog {
     this.currentPage.set(1);
   }
 
-  setView(v: 'grid' | 'list') {
-    this.activeView.set(v);
-  }
+  setView(v: 'grid' | 'list') { this.activeView.set(v); }
 
   setSort(event: Event) {
     this.sortBy.set((event.target as HTMLSelectElement).value as SortOption);
     this.currentPage.set(1);
   }
 
-  toggleStatus(status: BookStatus) {
-    const s = new Set(this.checkedStatuses());
-    s.has(status) ? s.delete(status) : s.add(status);
-    this.checkedStatuses.set(s);
+  toggleAvailability(disponible: boolean) {
+    const s = new Set(this.checkedAvailability());
+    s.has(disponible) ? s.delete(disponible) : s.add(disponible);
+    this.checkedAvailability.set(s);
     this.currentPage.set(1);
   }
 
-  isStatusChecked(status: BookStatus) {
-    return this.checkedStatuses().has(status);
-  }
+  isAvailabilityChecked(disponible: boolean) { return this.checkedAvailability().has(disponible); }
 
-  toggleLanguage(language: string) {
-    const s = new Set(this.checkedLangs());
-    s.has(language) ? s.delete(language) : s.add(language);
-    this.checkedLangs.set(s);
+  setYearMin(event: Event) {
+    const v = +(event.target as HTMLInputElement).value;
+    this.yearMin.set(Math.min(v, this.yearMax()));
     this.currentPage.set(1);
   }
 
-  isLanguageChecked(language: string) {
-    return this.checkedLangs().has(language);
+  setYearMax(event: Event) {
+    const v = +(event.target as HTMLInputElement).value;
+    this.yearMax.set(Math.max(v, this.yearMin()));
+    this.currentPage.set(1);
   }
 
-  goToPage(p: number | '…') {
-    if (typeof p === 'number') this.currentPage.set(p);
-  }
-
-  prevPage() {
-    if (this.currentPage() > 1) this.currentPage.update(p => p - 1);
-  }
-
-  nextPage() {
-    if (this.currentPage() < this.totalPages()) this.currentPage.update(p => p + 1);
-  }
-
+  goToPage(p: number | '…') { if (typeof p === 'number') this.currentPage.set(p); }
+  prevPage() { if (this.currentPage() > 1) this.currentPage.update(p => p - 1); }
+  nextPage() { if (this.currentPage() < this.totalPages()) this.currentPage.update(p => p + 1); }
 }

@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, signal } from '@angular/core';
 import { Book } from '../../models/book.model';
 
 interface CoverPalette {
@@ -32,10 +32,18 @@ const DEFAULT_PALETTE: CoverPalette = { bg: '#1F5D4E', accent: '#ABC5A2' };
 export class BookCoverComponent {
   book = input.required<Book>();
 
+  imgError = signal(false);
+
+  showImage = computed(() => !!this.book().coverUrl && !this.imgError());
+
   palette = computed<CoverPalette>(() => PALETTES[this.book().key] ?? DEFAULT_PALETTE);
 
   authorLastName = computed(() => {
     const parts = this.book().author.split(' ');
     return parts[parts.length - 1].toUpperCase();
   });
+
+  onImgError() {
+    this.imgError.set(true);
+  }
 }

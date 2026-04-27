@@ -5,7 +5,7 @@ export type IconName =
   | 'search' | 'bell' | 'profile' | 'heart' | 'history'
   | 'bookmark' | 'clock' | 'star' | 'plus' | 'users'
   | 'book' | 'chevron-right' | 'chevron-down' | 'arrow-right' | 'check'
-  | 'grid' | 'list' | 'filter';
+  | 'grid' | 'list';
 
 @Component({
   selector: 'app-icon',

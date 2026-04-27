@@ -1,7 +1,17 @@
-<div class="cover"
-  [style.background]="palette().bg"
-  [style.color]="palette().accent">
-  <div class="cover-author">{{ authorLastName() }}</div>
-  <div class="cover-title">{{ book().title }}</div>
-  <div class="cover-year">{{ book().year }}</div>
-</div>
+@if (showImage()) {
+  <img
+    class="cover cover--img"
+    [src]="book().coverUrl"
+    [alt]="book().title"
+    (error)="onImgError()" />
+} @else {
+  <div class="cover cover--placeholder"
+    [style.background]="palette().bg"
+    [style.color]="palette().accent">
+    <div class="cover-author">{{ authorLastName() }}</div>
+    <div class="cover-title">{{ book().title }}</div>
+    @if (book().year) {
+      <div class="cover-year">{{ book().year }}</div>
+    }
+  </div>
+}

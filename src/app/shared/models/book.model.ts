@@ -5,8 +5,7 @@ export interface Book {
   title: string;
   author: string;
   category: string;
-  year: number;
-  pages: number;
   status: BookStatus;
-  language: string;
+  coverUrl?: string;
+  year?: number;
 }
