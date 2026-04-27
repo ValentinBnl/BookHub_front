@@ -1,1 +1,169 @@
-<p>catalog works!</p>
+<div class="page">
+  <!-- Breadcrumb + En-tête -->
+  <div class="page-header">
+    <div class="breadcrumb">
+      ACCUEIL <span class="breadcrumb-sep">/</span> CATALOGUE
+    </div>
+
+    <div class="title-row">
+      <div>
+        <h1 class="page-title">Catalogue</h1>
+        <p class="page-subtitle">
+          <strong>{{ filteredBooks().length }}</strong>
+          {{ filteredBooks().length > 1 ? 'ouvrages trouvés' : 'ouvrage trouvé' }}
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <div class="view-toggle">
+          <button
+            class="view-btn"
+            [class.view-btn--active]="activeView() === 'grid'"
+            (click)="setView('grid')"
+            type="button">
+            <app-icon name="grid" [size]="14" /> Grille
+          </button>
+          <button
+            class="view-btn"
+            [class.view-btn--active]="activeView() === 'list'"
+            (click)="setView('list')"
+            type="button">
+            <app-icon name="list" [size]="14" /> Liste
+          </button>
+        </div>
+
+        <button class="btn-secondary" type="button">
+          <app-icon name="filter" [size]="14" /> Filtres
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres rapides -->
+  <div class="quick-filters">
+    @for (cat of categories; track cat) {
+      <button
+        class="filter-pill"
+        [class.filter-pill--active]="activeCategory() === cat"
+        (click)="setCategory(cat)"
+        type="button">
+        {{ cat }}
+      </button>
+    }
+  </div>
+
+  <!-- Grille principale -->
+  <div class="content-grid">
+    <!-- Facettes -->
+    <aside class="facets">
+      <!-- Disponibilité -->
+      <div class="facet-group">
+        <div class="facet-header">
+          <span class="facet-title">Disponibilité</span>
+          <app-icon name="chevron-down" [size]="14" />
+        </div>
+        @for (f of availabilityGroups(); track f.status) {
+          <label class="facet-row">
+            <span
+              class="checkbox"
+              [class.checkbox--checked]="isStatusChecked(f.status)"
+              (click)="toggleStatus(f.status)">
+              @if (isStatusChecked(f.status)) {
+                <app-icon name="check" [size]="10" [strokeWidth]="3" />
+              }
+            </span>
+            <span class="facet-label">{{ f.label }}</span>
+            <span class="facet-count">{{ f.count }}</span>
+          </label>
+        }
+      </div>
+
+      <!-- Langue -->
+      <div class="facet-group">
+        <div class="facet-header">
+          <span class="facet-title">Langue</span>
+          <app-icon name="chevron-down" [size]="14" />
+        </div>
+        @for (f of languageGroups(); track f.language) {
+          <label class="facet-row">
+            <span
+              class="checkbox"
+              [class.checkbox--checked]="isLanguageChecked(f.language)"
+              (click)="toggleLanguage(f.language)">
+              @if (isLanguageChecked(f.language)) {
+                <app-icon name="check" [size]="10" [strokeWidth]="3" />
+              }
+            </span>
+            <span class="facet-label">{{ f.language }}</span>
+            <span class="facet-count">{{ f.count }}</span>
+          </label>
+        }
+      </div>
+
+      <!-- Année -->
+      <div class="facet-group">
+        <div class="facet-header">
+          <span class="facet-title">Année</span>
+          <app-icon name="chevron-down" [size]="14" />
+        </div>
+        <div class="year-slider">
+          <div class="slider-track">
+            <div class="slider-fill"></div>
+            <div class="slider-thumb slider-thumb--left"></div>
+            <div class="slider-thumb slider-thumb--right"></div>
+          </div>
+          <div class="slider-labels">
+            <span>1831</span><span>2024</span>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- Résultats -->
+    <div class="results">
+      <div class="results-meta">
+        <span>
+          <strong>{{ filteredBooks().length }}</strong> résultat{{ filteredBooks().length > 1 ? 's' : '' }}
+        </span>
+        <label class="sort-label">
+          Trier par&nbsp;
+          <select class="sort-select" (change)="setSort($event)">
+            <option value="title-asc">Titre (A → Z)</option>
+            <option value="author-asc">Auteur (A → Z)</option>
+            <option value="year-desc">Plus récent</option>
+            <option value="year-asc">Plus ancien</option>
+          </select>
+        </label>
+      </div>
+
+      @if (books().length === 0) {
+        <p class="no-results">Aucun livre ne correspond à ces critères.</p>
+      } @else {
+        <div class="books-grid" [class.books-grid--list]="activeView() === 'list'">
+          @for (book of books(); track book.key) {
+            <app-book-card [book]="book" />
+          }
+        </div>
+      }
+
+      <!-- Pagination -->
+      @if (totalPages() > 1) {
+        <div class="pagination">
+          <button class="page-btn" (click)="prevPage()" [disabled]="currentPage() === 1">‹</button>
+          @for (p of paginationPages(); track $index) {
+            <button
+              class="page-btn"
+              [class.page-btn--active]="p === currentPage()"
+              [class.page-btn--ellipsis]="p === '…'"
+              [disabled]="p === '…'"
+              (click)="goToPage(p)">
+              {{ p }}
+            </button>
+          }
+          <button class="page-btn" (click)="nextPage()" [disabled]="currentPage() === totalPages()">›</button>
+        </div>
+      }
+    </div>
+  </div>
+</div>
