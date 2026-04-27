@@ -31,6 +31,7 @@ export type SortField     = 'titre' | 'auteur' | 'dateParution';
 export type SortDirection = 'asc' | 'desc';
 
 export interface BookFilter {
+  query?: string;
   categorie?: string;
   disponible?: boolean;
   anneeMin?: number;
@@ -70,7 +71,7 @@ export class BookService {
 
   getBooks(filter: BookFilter = {}): Observable<BookPage> {
     let params = new HttpParams()
-      .set('query',     '')
+      .set('query',     filter.query            ?? '')
       .set('page',      String(filter.page      ?? 0))
       .set('size',      String(filter.size      ?? 8))
       .set('sortBy',    filter.sortBy           ?? 'titre')

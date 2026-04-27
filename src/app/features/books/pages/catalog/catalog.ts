@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 import { catchError, debounceTime, map, of, switchMap } from 'rxjs';
 import { BookService, BookFilter, SortField, SortDirection } from '../../../../core/services/book';
 import { CategoryService } from '../../../../core/services/category';
@@ -26,7 +27,6 @@ const SORT_MAP: Record<SortOption, { sortBy: SortField; direction: SortDirection
   'year-asc':   { sortBy: 'dateParution', direction: 'asc'  },
 };
 
-
 const AVAILABILITY_OPTIONS: AvailabilityOption[] = [
   { disponible: true,  label: 'Disponible'       },
   { disponible: false, label: 'Rupture de stock' },
@@ -41,6 +41,7 @@ const AVAILABILITY_OPTIONS: AvailabilityOption[] = [
 export class Catalog {
   private bookService     = inject(BookService);
   private categoryService = inject(CategoryService);
+  private route           = inject(ActivatedRoute);
 
   activeCategory       = signal('Tous');
   activeView           = signal<'grid' | 'list'>('grid');
@@ -52,6 +53,11 @@ export class Catalog {
 
   readonly YEAR_MIN = YEAR_MIN;
   readonly YEAR_MAX = YEAR_MAX;
+
+  private urlQuery = toSignal(
+    this.route.queryParams.pipe(map(p => p['q'] ?? '')),
+    { initialValue: '' }
+  );
 
   trackFill = computed(() => {
     const range = YEAR_MAX - YEAR_MIN;
@@ -74,8 +80,10 @@ export class Catalog {
     const checked = this.checkedAvailability();
     // Un seul choix coché → on filtre ; les deux cochés ou aucun → pas de filtre
     const disponible = checked.size === 1 ? [...checked][0] : undefined;
+    const q = this.urlQuery().trim();
 
     return {
+      query:      q || undefined,
       categorie:  this.activeCategory(),
       disponible,
       anneeMin:   this.yearMin() > YEAR_MIN ? this.yearMin() : undefined,
