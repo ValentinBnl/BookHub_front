@@ -1,1 +1,23 @@
-<p>login works!</p>
+<div class="login-card">
+
+    <div class="tabs">
+        <button class="active">Se connecter</button>
+        <button>Créer un compte</button>
+    </div>
+
+    <h2>Heureux de vous revoir</h2>
+    <p class="desc">Connectez-vous avec votre adresse de membre.</p>
+
+    <form (ngSubmit)="onSubmit()">
+
+        <label>Email</label>
+        <input [(ngModel)]="email" name="email" type="email" placeholder="Adresse email">
+
+        <label>Mot de passe</label>
+        <input [(ngModel)]="password" name="password" type="password" placeholder="Mot de passe">
+
+        <button class="submit">Se connecter</button>
+
+    </form>
+
+</div>

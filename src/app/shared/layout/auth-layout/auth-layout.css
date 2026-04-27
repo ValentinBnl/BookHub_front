@@ -1,0 +1,82 @@
+.auth-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* LEFT */
+.auth-left {
+    flex: 1;
+    background: linear-gradient(180deg, #1F5D4E, #2A6B59);
+    color: white;
+    padding: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.left-content {
+    max-width: 520px;
+}
+
+/* LOGO */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 60px;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-title {
+    font-weight: 600;
+}
+
+.logo-sub {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* TEXT */
+h1 {
+    font-family: var(--font-display);
+    font-size: 40px;
+    line-height: 1.2;
+    margin-bottom: 24px;
+}
+
+.subtitle {
+    opacity: 0.85;
+    line-height: 1.6;
+    margin-bottom: 40px;
+}
+
+/* QUOTE */
+.quote {
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-left: 4px solid var(--color-amber);
+    border-radius: 8px;
+}
+
+.quote span {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+/* RIGHT */
+.auth-right {
+    flex: 1;
+    background: var(--color-cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
