@@ -1,64 +1,173 @@
 .login-card {
-    background: white;
-    padding: 40px;
-    border-radius: 16px;
-    width: 360px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  width: 400px;
+  background: var(--color-surface, #fff);
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
 }
 
-/* TABS */
+/* ── Onglets ──────────────────────────────────── */
 .tabs {
-    display: flex;
-    background: #eee;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    overflow: hidden;
+  display: flex;
+  background: var(--color-border-soft, #EFEAE0);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 28px;
+  gap: 4px;
 }
 
-.tabs button {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
+.tab {
+  flex: 1;
+  padding: 9px 12px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #5C5B6B);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
 }
 
-.tabs .active {
-    background: var(--color-green-dark);
-    color: white;
+.tab--active {
+  background: var(--color-green-dark, #1F5D4E);
+  color: #fff;
 }
 
-/* TEXT */
+/* ── Titre ────────────────────────────────────── */
 h2 {
-    margin-bottom: 10px;
+  font-family: var(--font-display, 'Poppins', sans-serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-ink, #1E1E2D);
+  margin: 0 0 6px;
 }
 
 .desc {
-    font-size: 14px;
-    color: #777;
-    margin-bottom: 20px;
+  font-size: 13.5px;
+  color: var(--color-text-muted, #8A8898);
+  margin: 0 0 28px;
 }
 
-/* FORM */
+/* ── Champs ───────────────────────────────────── */
 form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-input {
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
+.field-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-ink, #1E1E2D);
+}
+
+input[type='email'],
+input[type='password'] {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid var(--color-border, #E5E0D6);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--color-ink, #1E1E2D);
+  background: var(--color-surface, #fff);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input[type='email']::placeholder,
+input[type='password']::placeholder {
+  color: var(--color-text-muted, #8A8898);
+}
+
+input[type='email']:focus,
+input[type='password']:focus {
+  border-color: var(--color-green-dark, #1F5D4E);
+  box-shadow: 0 0 0 3px rgba(31, 93, 78, 0.12);
+}
+
+.forgot {
+  font-size: 12.5px;
+  color: var(--color-green-mid, #4E7C65);
+  text-decoration: none;
+}
+
+.forgot:hover {
+  text-decoration: underline;
+}
+
+/* ── Case à cocher ────────────────────────────── */
+.remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.remember input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-green-dark, #1F5D4E);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.remember label {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-text-secondary, #5C5B6B);
+  cursor: pointer;
+}
+
+/* ── Bouton ───────────────────────────────────── */
 .submit {
-    margin-top: 10px;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    background: var(--color-green-dark);
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-green-dark, #1F5D4E);
+  color: #fff;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.submit:hover {
+  background: #174d41;
+}
+
+.submit:active {
+  transform: translateY(1px);
+}
+
+/* ── Lien inscription ─────────────────────────── */
+.register-link {
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text-muted, #8A8898);
+  margin: 20px 0 0;
+}
+
+.register-link a {
+  color: var(--color-green-dark, #1F5D4E);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
 }

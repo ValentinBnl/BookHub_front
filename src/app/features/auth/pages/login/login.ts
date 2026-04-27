@@ -1,18 +1,18 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 @Component({
-  standalone: true,
-  imports: [FormsModule], // 👈 OBLIGATOIRE pour ngModel
+  imports: [FormsModule, RouterLink],
   templateUrl: './login.html',
-  styleUrls: ['./login.css']
+  styleUrl: './login.css',
 })
 export class Login {
-
-  email: string = '';
-  password: string = '';
+  email    = '';
+  password = '';
+  remember = false;
 
   onSubmit() {
-    console.log(this.email, this.password);
+    console.log({ email: this.email, password: this.password, remember: this.remember });
   }
 }

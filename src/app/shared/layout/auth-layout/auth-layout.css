@@ -1,82 +1,137 @@
 .auth-container {
-    display: flex;
-    height: 100vh;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
 }
 
-/* LEFT */
+/* ── Panneau gauche ─────────────────────────────── */
 .auth-left {
-    flex: 1;
-    background: linear-gradient(180deg, #1F5D4E, #2A6B59);
-    color: white;
-    padding: 60px;
-    display: flex;
-    align-items: center;
+  flex: 1;
+  background: linear-gradient(160deg, #1F5D4E 0%, #2A6B59 100%);
+  color: white;
+  padding: 52px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
 }
 
 .left-content {
-    max-width: 520px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 480px;
+  z-index: 1;
 }
 
-/* LOGO */
+/* Logo */
 .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 60px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 64px;
 }
 
 .logo-icon {
-    width: 40px;
-    height: 40px;
-    background: rgba(255,255,255,0.15);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .logo-title {
-    font-weight: 600;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.1;
 }
 
 .logo-sub {
-    font-size: 12px;
-    opacity: 0.7;
+  font-size: 12px;
+  opacity: 0.65;
+  margin-top: 2px;
 }
 
-/* TEXT */
+/* Titre */
 h1 {
-    font-family: var(--font-display);
-    font-size: 40px;
-    line-height: 1.2;
-    margin-bottom: 24px;
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 20px;
+  letter-spacing: -0.5px;
 }
 
 .subtitle {
-    opacity: 0.85;
-    line-height: 1.6;
-    margin-bottom: 40px;
+  font-size: 14.5px;
+  line-height: 1.65;
+  opacity: 0.82;
+  margin: 0 0 40px;
 }
 
-/* QUOTE */
+/* Citation */
 .quote {
-    background: rgba(255,255,255,0.1);
-    padding: 20px;
-    border-left: 4px solid var(--color-amber);
-    border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-left: 4px solid var(--color-amber, #E2A63A);
+  border-radius: 0 8px 8px 0;
+  padding: 18px 20px;
+}
+
+.quote p {
+  font-style: italic;
+  font-size: 14.5px;
+  line-height: 1.6;
+  margin: 0 0 8px;
+  opacity: 0.9;
 }
 
 .quote span {
-    display: block;
-    margin-top: 10px;
-    font-size: 14px;
+  font-size: 13px;
+  opacity: 0.65;
 }
 
-/* RIGHT */
+/* Cercles décoratifs */
+.deco-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.12);
+  z-index: 0;
+}
+
+.deco-circle--lg {
+  width: 340px;
+  height: 340px;
+  bottom: -100px;
+  right: -60px;
+}
+
+.deco-circle--sm {
+  width: 160px;
+  height: 160px;
+  bottom: 40px;
+  right: 200px;
+  background: rgba(0, 0, 0, 0.07);
+}
+
+/* Pied de page gauche */
+.left-footer {
+  font-size: 12px;
+  opacity: 0.45;
+  z-index: 1;
+}
+
+/* ── Panneau droit ──────────────────────────────── */
 .auth-right {
-    flex: 1;
-    background: var(--color-cream);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  flex: 1;
+  background: var(--color-cream, #F7F4EF);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
 }

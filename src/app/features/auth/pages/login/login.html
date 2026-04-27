@@ -1,23 +1,53 @@
 <div class="login-card">
 
-    <div class="tabs">
-        <button class="active">Se connecter</button>
-        <button>Créer un compte</button>
+  <div class="tabs">
+    <button type="button" class="tab tab--active">Se connecter</button>
+    <button type="button" class="tab" routerLink="/auth/register">Créer un compte</button>
+  </div>
+
+  <h2>Heureux de vous revoir</h2>
+  <p class="desc">Connectez-vous avec votre adresse de membre.</p>
+
+  <form (ngSubmit)="onSubmit()">
+
+    <div class="field">
+      <label for="email">Adresse email</label>
+      <input
+        id="email"
+        [(ngModel)]="email"
+        name="email"
+        type="email"
+        placeholder="alex.garcia@bookhub.fr"
+        autocomplete="email"
+      />
     </div>
 
-    <h2>Heureux de vous revoir</h2>
-    <p class="desc">Connectez-vous avec votre adresse de membre.</p>
+    <div class="field">
+      <div class="field-header">
+        <label for="password">Mot de passe</label>
+        <a href="#" class="forgot">Oublié ?</a>
+      </div>
+      <input
+        id="password"
+        [(ngModel)]="password"
+        name="password"
+        type="password"
+        placeholder="••••••••••"
+        autocomplete="current-password"
+      />
+    </div>
 
-    <form (ngSubmit)="onSubmit()">
+    <div class="remember">
+      <input type="checkbox" id="remember" [(ngModel)]="remember" name="remember" />
+      <label for="remember">Me maintenir connecté sur cet appareil</label>
+    </div>
 
-        <label>Email</label>
-        <input [(ngModel)]="email" name="email" type="email" placeholder="Adresse email">
+    <button type="submit" class="submit">Se connecter</button>
 
-        <label>Mot de passe</label>
-        <input [(ngModel)]="password" name="password" type="password" placeholder="Mot de passe">
+  </form>
 
-        <button class="submit">Se connecter</button>
-
-    </form>
+  <p class="register-link">
+    Pas encore membre ? <a routerLink="/auth/register">Rejoindre l'association</a>
+  </p>
 
 </div>

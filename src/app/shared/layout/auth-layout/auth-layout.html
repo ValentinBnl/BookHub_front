@@ -1,38 +1,47 @@
 <div class="auth-container">
 
-    <!-- LEFT -->
-    <div class="auth-left">
-        <div class="left-content">
+  <!-- GAUCHE -->
+  <div class="auth-left">
+    <div class="left-content">
 
-            <div class="logo">
-                <div class="logo-icon">📖</div>
-                <div>
-                    <div class="logo-title">BookHub</div>
-                    <div class="logo-sub">Bibliothèque associative</div>
-                </div>
-            </div>
-
-            <h1>
-                Bienvenue dans votre<br>
-                bibliothèque associative.
-            </h1>
-
-            <p class="subtitle">
-                1248 ouvrages, 312 membres, des rencontres mensuelles autour de la lecture.
-                Connectez-vous pour gérer vos emprunts et réservations.
-            </p>
-
-            <div class="quote">
-                <p>« La lecture est une porte ouverte sur un monde enchanté. »</p>
-                <span>— François Mauriac</span>
-            </div>
-
+      <div class="logo">
+        <div class="logo-icon">
+          <svg width="20" height="16" viewBox="0 0 32 24" fill="none">
+            <path d="M2 4C2 3 3 2 4 2L14 3C15 3.2 16 4 16 5L16 22C16 21 15 20.2 14 20L4 19C3 19 2 19.5 2 20Z"
+                  stroke="white" stroke-width="1.6" fill="none" stroke-linejoin="round"/>
+            <path d="M30 4C30 3 29 2 28 2L18 3C17 3.2 16 4 16 5L16 22C16 21 17 20.2 18 20L28 19C29 19 30 19.5 30 20Z"
+                  stroke="white" stroke-width="1.6" fill="none" stroke-linejoin="round"/>
+          </svg>
         </div>
+        <div>
+          <div class="logo-title">BookHub</div>
+          <div class="logo-sub">Bibliothèque associative</div>
+        </div>
+      </div>
+
+      <h1>Bienvenue dans votre<br>bibliothèque associative.</h1>
+
+      <p class="subtitle">
+        1 248 ouvrages, 312 membres, des rencontres mensuelles autour de la lecture.
+        Connectez-vous pour gérer vos emprunts et réservations.
+      </p>
+
+      <div class="quote">
+        <p>« La lecture est une porte ouverte sur un monde enchanté. »</p>
+        <span>— François Mauriac</span>
+      </div>
+
     </div>
 
-    <!-- RIGHT -->
-    <div class="auth-right">
-        <router-outlet></router-outlet>
-    </div>
+    <div class="deco-circle deco-circle--lg"></div>
+    <div class="deco-circle deco-circle--sm"></div>
+
+    <div class="left-footer">© 2024 BookHub · Association loi 1901</div>
+  </div>
+
+  <!-- DROITE -->
+  <div class="auth-right">
+    <router-outlet></router-outlet>
+  </div>
 
 </div>
