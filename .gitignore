@@ -6,3 +6,5 @@ BookHub - Maquette.html
 .vscode/
 dist/
 package-lock.json
+playwright-report/
+test-results/
