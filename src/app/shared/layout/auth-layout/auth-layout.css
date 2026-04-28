@@ -1,0 +1,137 @@
+﻿.auth-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+ /*Panneau gauche*/
+.auth-left {
+  flex: 1;
+  background: linear-gradient(160deg, #1F5D4E 0%, #2A6B59 100%);
+  color: white;
+  padding: 52px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.left-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 480px;
+  z-index: 1;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 64px;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.1;
+}
+
+.logo-sub {
+  font-size: 12px;
+  opacity: 0.65;
+  margin-top: 2px;
+}
+
+/* Titre */
+h1 {
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 20px;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  font-size: 14.5px;
+  line-height: 1.65;
+  opacity: 0.82;
+  margin: 0 0 40px;
+}
+
+/* Citation */
+.quote {
+  background: rgba(255, 255, 255, 0.08);
+  border-left: 4px solid var(--color-amber, #E2A63A);
+  border-radius: 0 8px 8px 0;
+  padding: 18px 20px;
+}
+
+.quote p {
+  font-style: italic;
+  font-size: 14.5px;
+  line-height: 1.6;
+  margin: 0 0 8px;
+  opacity: 0.9;
+}
+
+.quote span {
+  font-size: 13px;
+  opacity: 0.65;
+}
+
+/* Blocs decoratifs */
+.deco-block {
+  position: absolute;
+  border-radius: 34px;
+  z-index: 0;
+}
+
+.deco-block--lg {
+  width: 418px;
+  height: 420px;
+  top: -33px;
+  right: -82px;
+  background: rgba(108, 144, 126, 0.26);
+}
+
+.deco-block--sm {
+  width: 240px;
+  height: 190px;
+  bottom: -26px;
+  right: 30px;
+  background: rgba(100, 122, 71, 0.48);
+}
+
+/* Pied de page gauche */
+.left-footer {
+  font-size: 12px;
+  opacity: 0.45;
+  z-index: 1;
+}
+
+/*  Panneau droit */
+.auth-right {
+  flex: 1;
+  background: var(--color-cream, #F7F4EF);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}

@@ -1,1 +1,59 @@
-<p>login works!</p>
+<div class="login-card">
+  <div class="tabs">
+    <button type="button" class="tab tab--active">Se connecter</button>
+    <button type="button" class="tab" routerLink="/auth/register">Creer un compte</button>
+  </div>
+
+  <h2>Heureux de vous revoir</h2>
+  <p class="desc">Connectez-vous avec votre adresse de membre.</p>
+
+  <form (ngSubmit)="onSubmit()">
+    <div class="field">
+      <label for="email">Adresse email</label>
+      <input
+        id="email"
+        [(ngModel)]="email"
+        name="email"
+        type="email"
+        placeholder="alex.garcia@bookhub.fr"
+        autocomplete="email"
+      />
+    </div>
+
+    <div class="field">
+      <div class="field-header">
+        <label for="password">Mot de passe</label>
+        <a href="#" class="forgot">Oublié ?</a>
+      </div>
+      <input
+        id="password"
+        [(ngModel)]="password"
+        name="password"
+        type="password"
+        placeholder="Votre mot de passe"
+        autocomplete="current-password"
+      />
+    </div>
+
+    <div class="remember">
+      <input type="checkbox" id="remember" [(ngModel)]="remember" name="remember" />
+      <label for="remember">Me maintenir connecte sur cet appareil</label>
+    </div>
+
+    @if (successMessage) {
+      <p class="form-success">{{ successMessage }}</p>
+    }
+
+    @if (errorMessage) {
+      <p class="form-error">{{ errorMessage }}</p>
+    }
+
+    <button type="submit" class="submit" [disabled]="loading">
+      {{ loading ? 'Connexion...' : 'Se connecter' }}
+    </button>
+  </form>
+
+  <p class="register-link">
+    Pas encore membre ? <a routerLink="/auth/register">Rejoindre l'association</a>
+  </p>
+</div>

@@ -1,22 +1,22 @@
 @import 'tailwindcss';
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
 
-@theme {
-  --color-green-dark:    #1F5D4E;
-  --color-green-mid:     #4E7C65;
-  --color-green-light:   #ABC5A2;
-  --color-cream:         #F7F4EF;
-  --color-ink:           #1E1E2D;
-  --color-amber:         #E2A63A;
-  --color-terracotta:    #E76F51;
-  --color-violet:        #705BA6;
-  --color-slate-soft:    #6C6A86;
-  --color-surface:       #FFFFFF;
-  --color-border:        #E5E0D6;
-  --color-border-soft:   #EFEAE0;
-  --color-text-primary:  #1E1E2D;
+:root {
+  --color-green-dark: #1F5D4E;
+  --color-green-mid: #4E7C65;
+  --color-green-light: #ABC5A2;
+  --color-cream: #F7F4EF;
+  --color-ink: #1E1E2D;
+  --color-amber: #E2A63A;
+  --color-terracotta: #E76F51;
+  --color-violet: #705BA6;
+  --color-slate-soft: #6C6A86;
+  --color-surface: #FFFFFF;
+  --color-border: #E5E0D6;
+  --color-border-soft: #EFEAE0;
+  --color-text-primary: #1E1E2D;
   --color-text-secondary: #5C5B6B;
-  --color-text-muted:    #8A8898;
+  --color-text-muted: #8A8898;
 
   --font-sans: 'Inter', sans-serif;
   --font-display: 'Poppins', sans-serif;
