@@ -37,9 +37,19 @@ test.describe('Connexion', () => {
   });
 
   test("identifiants invalides affiche un message d'erreur", async ({ page }) => {
-    await page.route(/\/api\/auth\/login/, route =>
-      route.fulfill({ status: 401, json: { message: 'Unauthorized' } }),
-    );
+    await page.route(/\/api\/auth\/login/, route => {
+      if (route.request().method() === 'OPTIONS') {
+        return route.fulfill({
+          status: 204,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST',
+            'Access-Control-Allow-Headers': 'Content-Type',
+          },
+        });
+      }
+      return route.fulfill({ status: 401, json: { message: 'Unauthorized' } });
+    });
 
     await page.fill('#email', 'wrong@example.com');
     await page.fill('#password', 'badpassword');
@@ -131,9 +141,19 @@ test.describe('Inscription', () => {
   });
 
   test("erreur API affiche un message d'erreur", async ({ page }) => {
-    await page.route(/\/api\/auth\/register/, route =>
-      route.fulfill({ status: 400, json: { message: 'Email déjà utilisé' } }),
-    );
+    await page.route(/\/api\/auth\/register/, route => {
+      if (route.request().method() === 'OPTIONS') {
+        return route.fulfill({
+          status: 204,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST',
+            'Access-Control-Allow-Headers': 'Content-Type',
+          },
+        });
+      }
+      return route.fulfill({ status: 400, json: { message: 'Email déjà utilisé' } });
+    });
 
     await page.fill('#prenom', 'Alice');
     await page.fill('#nom', 'Dupont');
