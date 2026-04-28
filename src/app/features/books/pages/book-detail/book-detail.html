@@ -1,0 +1,84 @@
+@if (loading()) {
+<div class="detail-loading">
+    <div class="skeleton-hero"></div>
+    <div class="skeleton-body">
+        <div class="skeleton-block"></div>
+        <div class="skeleton-block skeleton-block--sm"></div>
+    </div>
+</div>
+} @else if (book()) {
+<div class="detail-page">
+
+
+    <div class="hero">
+        <div class="hero-cover">
+          <app-book-cover [book]="bookForCover()!" />
+        </div>
+        <div class="hero-info">
+            <nav class="breadcrumb">
+                <a routerLink="/catalog" class="breadcrumb-link">Catalogue</a>
+                <span>/</span>
+                <span>{{ book()!.categorie }}</span>
+                <span>/</span>
+                <span class="breadcrumb-current">{{ book()!.titre }}</span>
+            </nav>
+
+            <div class="category-tags">
+                <span class="tag">{{ book()!.categorie }}</span>
+            </div>
+
+            <h1 class="hero-title">{{ book()!.titre }}</h1>
+
+            <p class="hero-author">
+                par <strong>{{ book()!.auteur }}</strong>
+                @if (year()) { · {{ year() }} }
+            </p>
+
+            @if (book()!.nombrePages) {
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <app-icon name="book" [size]="14" />
+                    <span>{{ book()!.nombrePages }} pages</span>
+                </div>
+            </div>
+            }
+
+            <div class="hero-actions">
+                <app-reserve-button />
+                <button class="btn-ghost" type="button">
+                    <app-icon name="bookmark" [size]="15" />
+                    Favoris
+                </button>
+                <button class="btn-ghost" type="button">
+                    <app-icon name="share" [size]="15" />
+                    Partager
+                </button>
+                <span class="availability" [class.availability--ok]="book()!.exemplairesDisponibles > 0">
+                    <span class="availability-dot"></span>
+                    {{ book()!.exemplairesDisponibles }} exemplaire(s) disponible(s)
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="body-grid">
+        <section class="summary">
+            <h2>Résumé</h2>
+            <p>{{ book()!.description }}</p>
+        </section>
+
+        <aside class="details-card">
+            <h3>DÉTAILS</h3>
+            @if (book()!.isbn) {
+            <div class="detail-row">
+                <span>ISBN</span>
+                <span>{{ book()!.isbn }}</span>
+            </div>
+            }
+        </aside>
+    </div>
+
+</div>
+} @else {
+<p class="not-found">Livre introuvable.</p>
+}

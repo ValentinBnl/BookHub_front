@@ -27,6 +27,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/loans/pages/my-loans/my-loans').then((m) => m.MyLoans),
       },
+      {
+        path: 'book/:id',
+        loadComponent: () =>
+          import('./features/books/pages/book-detail/book-detail').then((m) => m.BookDetail),
+      },
     ],
   },
   { path: '**', redirectTo: 'home' },
