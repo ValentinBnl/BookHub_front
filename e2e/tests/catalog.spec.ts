@@ -65,9 +65,8 @@ test.describe('Catalogue', () => {
 
   test('la pagination navigue vers la page suivante', async ({ page }) => {
     // LIFO: ce mock prend priorité sur celui du beforeEach
-    await page.route(
-      url => url.pathname === '/api/books/search',
-      route => route.fulfill({ status: 200, json: mockMultiPageBookPage }),
+    await page.route(/\/api\/books\/search/, route =>
+      route.fulfill({ status: 200, json: mockMultiPageBookPage }),
     );
 
     await page.reload();
@@ -84,9 +83,8 @@ test.describe('Catalogue', () => {
 
   test('affiche un message quand aucun résultat', async ({ page }) => {
     // LIFO: ce mock prend priorité sur celui du beforeEach
-    await page.route(
-      url => url.pathname === '/api/books/search',
-      route => route.fulfill({ status: 200, json: mockEmptyBookPage }),
+    await page.route(/\/api\/books\/search/, route =>
+      route.fulfill({ status: 200, json: mockEmptyBookPage }),
     );
 
     await page.reload();
@@ -99,7 +97,7 @@ test.describe('Catalogue', () => {
     let capturedQuery = '';
 
     // LIFO: ce mock capture la requête
-    await page.route(url => url.pathname === '/api/books/search', route => {
+    await page.route(/\/api\/books\/search/, route => {
       capturedQuery = new URL(route.request().url()).searchParams.get('query') ?? '';
       return route.fulfill({ status: 200, json: { ...mockMultiPageBookPage } });
     });

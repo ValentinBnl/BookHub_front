@@ -19,9 +19,8 @@ test.describe('Connexion', () => {
   });
 
   test('connexion réussie redirige vers /home et stocke le token', async ({ page }) => {
-    await page.route(
-      url => url.pathname === '/api/auth/login',
-      route => route.fulfill({ status: 200, json: mockAuthResponse }),
+    await page.route(/\/api\/auth\/login/, route =>
+      route.fulfill({ status: 200, json: mockAuthResponse }),
     );
     await mockHomeRoutes(page);
 
@@ -38,9 +37,8 @@ test.describe('Connexion', () => {
   });
 
   test("identifiants invalides affiche un message d'erreur", async ({ page }) => {
-    await page.route(
-      url => url.pathname === '/api/auth/login',
-      route => route.fulfill({ status: 401, json: { message: 'Unauthorized' } }),
+    await page.route(/\/api\/auth\/login/, route =>
+      route.fulfill({ status: 401, json: { message: 'Unauthorized' } }),
     );
 
     await page.fill('#email', 'wrong@example.com');
@@ -52,7 +50,7 @@ test.describe('Connexion', () => {
 
   test('le bouton est désactivé pendant la soumission', async ({ page }) => {
     let resolveLogin!: () => void;
-    await page.route(url => url.pathname === '/api/auth/login', async route => {
+    await page.route(/\/api\/auth\/login/, async route => {
       await new Promise<void>(r => {
         resolveLogin = r;
       });
@@ -116,9 +114,8 @@ test.describe('Inscription', () => {
   });
 
   test("inscription réussie redirige vers /auth/login?registered=1", async ({ page }) => {
-    await page.route(
-      url => url.pathname === '/api/auth/register',
-      route => route.fulfill({ status: 200, json: mockAuthResponse }),
+    await page.route(/\/api\/auth\/register/, route =>
+      route.fulfill({ status: 200, json: mockAuthResponse }),
     );
 
     await page.fill('#prenom', 'Alice');
@@ -134,9 +131,8 @@ test.describe('Inscription', () => {
   });
 
   test("erreur API affiche un message d'erreur", async ({ page }) => {
-    await page.route(
-      url => url.pathname === '/api/auth/register',
-      route => route.fulfill({ status: 400, json: { message: 'Email déjà utilisé' } }),
+    await page.route(/\/api\/auth\/register/, route =>
+      route.fulfill({ status: 400, json: { message: 'Email déjà utilisé' } }),
     );
 
     await page.fill('#prenom', 'Alice');

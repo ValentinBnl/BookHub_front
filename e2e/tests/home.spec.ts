@@ -29,7 +29,7 @@ test.describe("Page d'accueil", () => {
     });
 
     // LIFO: ce mock prend priorité sur celui du beforeEach
-    await page.route(url => url.pathname === '/api/books', async route => {
+    await page.route(/\/api\/books(\?|$)/, async route => {
       requestResolve();
       await new Promise(r => setTimeout(r, 1500));
       await route.fulfill({ status: 200, json: mockBookPage });

@@ -5,9 +5,8 @@ const BOOK_ID = 1;
 
 test.describe('Détail du livre', () => {
   test.beforeEach(async ({ page }) => {
-    await page.route(
-      url => url.pathname === `/api/books/${BOOK_ID}`,
-      route => route.fulfill({ status: 200, json: mockBookDetail }),
+    await page.route(/\/api\/books\/1(\?|$)/, route =>
+      route.fulfill({ status: 200, json: mockBookDetail }),
     );
     await page.goto(`/book/${BOOK_ID}`);
   });
@@ -19,7 +18,7 @@ test.describe('Détail du livre', () => {
     });
 
     // LIFO: ce mock prend priorité sur celui du beforeEach
-    await page.route(url => url.pathname === `/api/books/${BOOK_ID}`, async route => {
+    await page.route(/\/api\/books\/1(\?|$)/, async route => {
       requestResolve();
       await new Promise(r => setTimeout(r, 1500));
       await route.fulfill({ status: 200, json: mockBookDetail });
@@ -61,9 +60,8 @@ test.describe('Détail du livre', () => {
 
 test.describe('Livre introuvable', () => {
   test('affiche un message quand le livre n\'existe pas', async ({ page }) => {
-    await page.route(
-      url => url.pathname === '/api/books/9999',
-      route => route.fulfill({ status: 404, json: { message: 'Not found' } }),
+    await page.route(/\/api\/books\/9999/, route =>
+      route.fulfill({ status: 404, json: { message: 'Not found' } }),
     );
     await page.goto('/book/9999');
     await expect(page.locator('.not-found')).toBeVisible();

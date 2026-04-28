@@ -15,13 +15,13 @@ test.describe('Navigation', () => {
   });
 
   test('la sidebar navigue vers le catalogue', async ({ page }) => {
-    await page.locator('a[href="/catalog"]').click();
+    await page.locator('aside a[href="/catalog"]').click();
     await page.waitForURL('**/catalog');
   });
 
   test("la sidebar navigue vers l'accueil", async ({ page }) => {
     await page.goto('/catalog');
-    await page.locator('a[href="/home"]').click();
+    await page.locator('aside a[href="/home"]').click();
     await page.waitForURL('**/home');
   });
 
