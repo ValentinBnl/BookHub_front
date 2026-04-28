@@ -39,37 +39,8 @@
       </div>
     } @else {
       <div class="books-grid">
-        @for (book of books(); track book.id) {
-          <div class="book-card">
-            <div class="book-cover">
-              <div class="cover-default">
-                <app-icon name="book" [size]="36" />
-              </div>
-              @if (book.urlCouverture) {
-                <img
-                  [src]="book.urlCouverture"
-                  [alt]="book.titre"
-                  class="cover-img"
-                  (error)="onImgError($event)"
-                  loading="lazy"
-                />
-              }
-              <button class="bookmark-btn" aria-label="Mettre en favori">
-                <app-icon name="bookmark" [size]="13" />
-              </button>
-            </div>
-            <div class="book-info">
-              <p class="book-title">{{ book.titre }}</p>
-              <p class="book-author">{{ book.auteur }}</p>
-              <span
-                class="badge"
-                [class.badge--available]="book.exemplairesDisponibles > 0"
-                [class.badge--borrowed]="book.exemplairesDisponibles === 0"
-              >
-                {{ book.exemplairesDisponibles > 0 ? 'Disponible' : 'En cours' }}
-              </span>
-            </div>
-          </div>
+        @for (book of booksForDetails(); track book.key) {
+          <app-book-card [book]="book" />
         }
       </div>
     }

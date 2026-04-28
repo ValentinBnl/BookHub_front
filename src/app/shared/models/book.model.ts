@@ -27,3 +27,17 @@ export interface BookPage {
   number: number;
   size: number;
 }
+
+export interface BookDetail {
+  id: number;
+  titre: string;
+  auteur: string;
+  isbn: string;
+  description: string;
+  dateParution: string;
+  nombrePages: number;
+  urlCouverture: string;
+  totalExemplaires: number;
+  exemplairesDisponibles: number;
+  categorie: string;
+}
