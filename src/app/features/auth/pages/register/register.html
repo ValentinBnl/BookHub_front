@@ -1,0 +1,56 @@
+<div class="login-card register-card">
+  <div class="tabs">
+    <button type="button" class="tab" routerLink="/auth/login">Se connecter</button>
+    <button type="button" class="tab tab--active">Creer un compte</button>
+  </div>
+
+  <h2>Creer votre compte</h2>
+  <p class="desc">Rejoignez BookHub pour emprunter, reserver et suivre vos lectures.</p>
+
+  <form (ngSubmit)="onSubmit()">
+    <div class="grid-two">
+      <div class="field">
+        <label for="prenom">Prenom</label>
+        <input id="prenom" [(ngModel)]="prenom" name="prenom" type="text" autocomplete="given-name" />
+      </div>
+
+      <div class="field">
+        <label for="nom">Nom</label>
+        <input id="nom" [(ngModel)]="nom" name="nom" type="text" autocomplete="family-name" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="email">Adresse email</label>
+      <input id="email" [(ngModel)]="email" name="email" type="email" autocomplete="email" />
+    </div>
+
+    <div class="field">
+      <label for="telephone">Telephone</label>
+      <input id="telephone" [(ngModel)]="telephone" name="telephone" type="tel" autocomplete="tel" placeholder="0612345678" />
+    </div>
+
+    <div class="field">
+      <label for="password">Mot de passe</label>
+      <input id="password" [(ngModel)]="password" name="password" type="password" autocomplete="new-password" />
+      <p class="hint">12 caracteres minimum avec majuscule, minuscule, chiffre et caractere special.</p>
+    </div>
+
+    <div class="field">
+      <label for="confirmPassword">Confirmer le mot de passe</label>
+      <input id="confirmPassword" [(ngModel)]="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" />
+    </div>
+
+    @if (errorMessage) {
+      <p class="form-error">{{ errorMessage }}</p>
+    }
+
+    <button type="submit" class="submit" [disabled]="loading">
+      {{ loading ? 'Creation...' : 'Creer mon compte' }}
+    </button>
+  </form>
+
+  <p class="register-link">
+    Deja membre ? <a routerLink="/auth/login">Se connecter</a>
+  </p>
+</div>
