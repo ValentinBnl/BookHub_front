@@ -1,0 +1,9 @@
+<div class="card">
+  <div class="cover-wrapper">
+    <app-book-cover [book]="book()" />
+  </div>
+
+  <div class="card-title">{{ book().title }}</div>
+  <div class="card-author">{{ book().author }}</div>
+  <app-badge [status]="book().status" />
+</div>
