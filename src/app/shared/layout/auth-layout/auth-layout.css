@@ -1,10 +1,10 @@
-.auth-container {
+﻿.auth-container {
   display: flex;
   height: 100vh;
   overflow: hidden;
 }
 
-/* ── Panneau gauche ─────────────────────────────── */
+ /*Panneau gauche*/
 .auth-left {
   flex: 1;
   background: linear-gradient(160deg, #1F5D4E 0%, #2A6B59 100%);
@@ -96,27 +96,27 @@ h1 {
   opacity: 0.65;
 }
 
-/* Cercles décoratifs */
-.deco-circle {
+/* Blocs decoratifs */
+.deco-block {
   position: absolute;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.12);
+  border-radius: 34px;
   z-index: 0;
 }
 
-.deco-circle--lg {
-  width: 340px;
-  height: 340px;
-  bottom: -100px;
-  right: -60px;
+.deco-block--lg {
+  width: 418px;
+  height: 420px;
+  top: -33px;
+  right: -82px;
+  background: rgba(108, 144, 126, 0.26);
 }
 
-.deco-circle--sm {
-  width: 160px;
-  height: 160px;
-  bottom: 40px;
-  right: 200px;
-  background: rgba(0, 0, 0, 0.07);
+.deco-block--sm {
+  width: 240px;
+  height: 190px;
+  bottom: -26px;
+  right: 30px;
+  background: rgba(100, 122, 71, 0.48);
 }
 
 /* Pied de page gauche */
@@ -126,7 +126,7 @@ h1 {
   z-index: 1;
 }
 
-/* ── Panneau droit ──────────────────────────────── */
+/*  Panneau droit */
 .auth-right {
   flex: 1;
   background: var(--color-cream, #F7F4EF);
