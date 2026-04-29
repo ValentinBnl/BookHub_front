@@ -55,6 +55,7 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/books/pages/book-detail/book-detail').then((m) => m.BookDetail),
       },
+      { path: 'reservations', redirectTo: 'loans', pathMatch: 'full' },
     ],
   },
 

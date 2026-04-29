@@ -17,7 +17,7 @@
 
   <!-- Navigation principale -->
   <nav class="nav-main">
-    @for (item of navItems; track item.route) {
+    @for (item of navItems(); track item.route) {
       <a [routerLink]="item.route" routerLinkActive="nav-item--active" class="nav-item">
         <app-icon [name]="item.icon" [size]="18" />
         <span class="nav-label">{{ item.label }}</span>
