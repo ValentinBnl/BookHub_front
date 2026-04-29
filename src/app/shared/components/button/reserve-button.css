@@ -20,3 +20,9 @@
 .btn-reserve:active {
     transform: translateY(1px);
 }
+
+.reserve-error {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--color-terracotta, #c0392b);
+}

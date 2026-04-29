@@ -71,6 +71,7 @@ export const routes: Routes = [
             "./features/books/pages/librarian-catalog/librarian-catalog"
           ).then((m) => m.LibrarianCatalog),
       },
+      { path: 'reservations', redirectTo: 'loans', pathMatch: 'full' },
     ],
   },
 

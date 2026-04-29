@@ -12,7 +12,7 @@
   </div>
 
   <div class="stats-row">
-    @for (stat of stats; track stat.label) {
+    @for (stat of stats(); track stat.label) {
       <div class="stat-card">
         <div class="stat-icon">
           <app-icon [name]="stat.icon" [size]="18" />
@@ -64,7 +64,27 @@
           Voir tout <app-icon name="chevron-right" [size]="14" />
         </a>
       </div>
-      <div class="placeholder-block">À venir</div>
+      @if (activeLoans().length === 0) {
+        <div class="placeholder-block">Aucun emprunt en cours.</div>
+      } @else {
+        <div class="home-loans-list">
+          @for (loan of activeLoans(); track loan.id) {
+            <div class="home-loan-item" [class.home-loan-item--late]="loan.statut === 'EN RETARD'">
+              <div class="home-loan-cover">
+                <app-book-cover [book]="toLoanBook(loan)" />
+              </div>
+              <div class="home-loan-info">
+                <p class="home-loan-title">{{ loan.titre }}</p>
+                <p class="home-loan-author">{{ loan.auteur }}</p>
+                <p class="home-loan-date">Retour le {{ loan.dateRetourPrevue | date:'dd/MM/yyyy' }}</p>
+              </div>
+              <span class="home-loan-badge" [class.home-loan-badge--late]="loan.statut === 'EN RETARD'">
+                {{ loan.statut === 'EN RETARD' ? 'En retard' : 'En cours' }}
+              </span>
+            </div>
+          }
+        </div>
+      }
     </section>
   </div>
 

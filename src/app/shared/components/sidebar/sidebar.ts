@@ -1,7 +1,10 @@
-import { Component, computed, inject } from "@angular/core";
-import { RouterLink, RouterLinkActive } from "@angular/router";
-import { AuthService } from "../../../core/auth/auth.service";
-import { IconComponent, type IconName } from "../icon/icon";
+import { Component, inject, signal, computed, afterNextRender, DestroyRef } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, of } from 'rxjs';
+import { IconComponent, type IconName } from '../icon/icon';
+import { LoansService } from '../../../features/loans/loans.service';
+import { AuthService } from '../../../core/auth/auth.service';
 
 interface NavItem {
   label: string;
@@ -12,39 +15,52 @@ interface NavItem {
 }
 
 @Component({
-  selector: "app-sidebar",
+  selector: 'app-sidebar',
   imports: [RouterLink, RouterLinkActive, IconComponent],
-  templateUrl: "./sidebar.html",
-  styleUrl: "./sidebar.css",
+  templateUrl: './sidebar.html',
+  styleUrl: './sidebar.css',
 })
 export class SidebarComponent {
+  private loansService = inject(LoansService);
+  private destroyRef = inject(DestroyRef);
   private readonly authService = inject(AuthService);
 
   readonly displayName = this.authService.displayName;
   readonly initials = this.authService.initials;
   readonly memberSinceLabel = this.authService.memberSinceLabel;
 
+  readonly loanCount = signal<number | undefined>(undefined);
+
   private readonly allNavItems: NavItem[] = [
-    { label: "Accueil", route: "/home", icon: "home" },
-    { label: "Catalogue", route: "/catalog", icon: "catalog" },
-    { label: "Mes emprunts", route: "/loans", icon: "borrow", count: 3 },
-    {
-      label: "Gestion catalogue",
-      route: "/librarian-catalog",
-      icon: "book",
-      roles: ["LIBRAIRE"],
-    },
+    { label: 'Accueil',           route: '/home',              icon: 'home' },
+    { label: 'Catalogue',         route: '/catalog',           icon: 'catalog' },
+    { label: 'Mes emprunts',      route: '/loans',             icon: 'borrow' },
+    { label: 'Gestion catalogue', route: '/librarian-catalog', icon: 'book', roles: ['LIBRAIRE'] },
   ];
 
-  navItems = computed(() => {
-    const role = this.authService.currentUser()?.role ?? "";
-    return this.allNavItems.filter(
-      (item) => !item.roles || item.roles.includes(role),
-    );
+  navItems = computed<NavItem[]>(() => {
+    const role = this.authService.currentUser()?.role ?? '';
+    return this.allNavItems
+      .filter(item => !item.roles || item.roles.includes(role))
+      .map(item => item.route === '/loans' ? { ...item, count: this.loanCount() } : item);
   });
 
-  bottomItems: NavItem[] = [
-    { label: "Paramètres", route: "/settings", icon: "settings" },
-    { label: "Déconnexion", route: "/auth", icon: "logout" },
+  readonly bottomItems: NavItem[] = [
+    { label: 'Paramètres',  route: '/settings', icon: 'settings' },
+    { label: 'Déconnexion', route: '/auth',      icon: 'logout' },
   ];
+
+  constructor() {
+    afterNextRender(() => {
+      this.loansService.getMyLoans()
+        .pipe(
+          catchError(() => of([])),
+          takeUntilDestroyed(this.destroyRef)
+        )
+        .subscribe(loans => {
+          const active = loans.filter(l => l.statut === 'EN COURS' || l.statut === 'EN RETARD');
+          this.loanCount.set(active.length || undefined);
+        });
+    });
+  }
 }

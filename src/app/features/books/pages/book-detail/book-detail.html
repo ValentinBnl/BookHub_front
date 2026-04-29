@@ -12,7 +12,7 @@
 
     <div class="hero">
         <div class="hero-cover">
-          <app-book-cover [book]="bookForCover()!" />
+            <app-book-cover [book]="bookForCover()!" />
         </div>
         <div class="hero-info">
             <nav class="breadcrumb">
@@ -44,7 +44,9 @@
             }
 
             <div class="hero-actions">
-                <app-reserve-button />
+                <app-reserve-button
+                    [bookId]="book()!.id"
+                    [exemplairesDisponibles]="book()!.exemplairesDisponibles" />
                 <button class="btn-ghost" type="button">
                     <app-icon name="bookmark" [size]="15" />
                     Favoris

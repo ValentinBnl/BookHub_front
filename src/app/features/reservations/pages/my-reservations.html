@@ -1,0 +1,39 @@
+<div class="reservations-page">
+
+  <div class="page-header">
+    <h1 class="page-title">Mes réservations</h1>
+    <p class="page-subtitle">Suivez votre position dans la file d'attente.</p>
+  </div>
+
+  @if (loading()) {
+    <div class="reservations-list">
+      @for (_ of [1, 2, 3]; track $index) {
+        <div class="reservation-skeleton"></div>
+      }
+    </div>
+  } @else if (reservations().length === 0) {
+    <div class="empty-state">
+      <p>Vous n'avez aucune réservation en cours.</p>
+      <a routerLink="/catalog" class="btn-catalog">Parcourir le catalogue</a>
+    </div>
+  } @else {
+    <div class="reservations-list">
+      @for (r of reservations(); track r.id) {
+        <div class="reservation-card">
+          <div class="reservation-rank">
+            <span class="rank-number">{{ r.rankWaitingList }}</span>
+            <span class="rank-label">en file</span>
+          </div>
+          <div class="reservation-info">
+            <p class="reservation-title">{{ r.bookTitle }}</p>
+            <p class="reservation-date">Réservé le {{ r.reservationDate }}</p>
+          </div>
+          <div class="reservation-status">
+            <span class="status-badge">{{ r.status }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+</div>

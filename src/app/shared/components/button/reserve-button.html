@@ -1,4 +1,17 @@
-<button class="btn-reserve" type="button">
-    <app-icon name="book" [size]="18" />
-    Réserver ce livre
+<button class="btn-reserve" type="button"
+    [disabled]="loading() || done() || noStock()"
+    (click)="reserve()">
+    @if (noStock()) {
+        Aucun exemplaire disponible
+    } @else if (done()) {
+        Réservé ✓
+    } @else if (loading()) {
+        En cours...
+    } @else {
+        <app-icon name="book" [size]="15" />
+        Réserver ce livre
+    }
 </button>
+@if (errorMsg()) {
+<p class="reserve-error">{{ errorMsg() }}</p>
+}

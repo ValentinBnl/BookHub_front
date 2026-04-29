@@ -1,1 +1,130 @@
-<p>my-loans works!</p>
+<div class="loans-page">
+
+  <div class="page-header">
+    <h1 class="page-title">Mes emprunts et réservations</h1>
+    <p class="page-subtitle">
+      {{ loans().length }} emprunt(s) en cours · {{ reservations().length }} réservation(s)
+    </p>
+  </div>
+
+  @if (hasLate()) {
+  <div class="alert-banner">
+    <div class="alert-icon">⏰</div>
+    <div class="alert-body">
+      <strong>Un livre est en retard</strong>
+      @for (l of lateLoans(); track l.id) {
+      <p>« {{ l.titre }} » devait être retourné le {{ l.dateRetourPrevue }}.</p>
+      }
+    </div>
+  </div>
+  }
+
+  <div class="toggle-tabs">
+    <button class="toggle-tab" [class.toggle-tab--active]="activeTab() === 'loans'" (click)="activeTab.set('loans')">
+      Emprunts <span class="toggle-count">{{ loans().length }}</span>
+    </button>
+    <button class="toggle-tab" [class.toggle-tab--active]="activeTab() === 'reservations'"
+      (click)="activeTab.set('reservations')">
+      Réservations <span class="toggle-count">{{ reservations().length }}</span>
+    </button>
+  </div>
+
+  @if (loading()) {
+  <div class="loans-list">
+    @for (_ of [1, 2, 3]; track $index) {
+    <div class="loan-skeleton"></div>
+    }
+  </div>
+
+  } @else if (activeTab() === 'loans') {
+
+  @if (loans().length === 0) {
+  <div class="empty-state">
+    <p>Vous n'avez aucun emprunt en cours.</p>
+    <a routerLink="/catalog" class="btn-catalog">Parcourir le catalogue</a>
+  </div>
+  } @else {
+  <div class="loans-container">
+    @for (loan of loans(); track loan.id) {
+    <div class="loan-card" [class.loan-card--late]="loan.statut === 'EN RETARD'">
+
+      <div class="loan-cover">
+        <app-book-cover [book]="toBook(loan)" />
+      </div>
+
+      <div class="loan-info">
+        <p class="loan-title">{{ loan.titre }}</p>
+        <p class="loan-author">{{ loan.auteur }}
+          @if (loan.dateParution) { · {{ loan.dateParution | slice:0:4 }} }
+        </p>
+        <p class="loan-meta">Emprunté le {{ loan.dateEmprunt | date:'dd/MM/yyyy' }}</p>
+      </div>
+
+      <div class="loan-right">
+
+        <div class="loan-progress">
+          <p class="loan-return">Retour le {{ loan.dateRetourPrevue | date:'dd/MM/yyyy' }}</p>
+          <div class="progress-bar">
+            <div class="progress-fill" [class.progress-fill--late]="loan.statut === 'EN RETARD'"
+              [style.width.%]="getProgress(loan)"></div>
+          </div>
+        </div>
+
+        <span class="status-badge"
+          [class.status-badge--cours]="loan.statut === 'EN COURS'"
+          [class.status-badge--retard]="loan.statut === 'EN RETARD'">
+          {{ statusLabel(loan.statut) }}
+        </span>
+
+
+        <button class="btn-prolong">Prolonger</button>
+
+      </div>
+
+    </div>
+    }
+  </div>
+  }
+
+  } @else {
+
+  @if (reservations().length === 0) {
+  <div class="empty-state">
+    <p>Vous n'avez aucune réservation en cours.</p>
+    <a routerLink="/catalog" class="btn-catalog">Parcourir le catalogue</a>
+  </div>
+  } @else {
+  <div class="loans-container">
+    @for (r of reservations(); track r.id) {
+    <div class="loan-card">
+
+      <div class="loan-cover">
+        <app-book-cover [book]="toReservationBook(r)" />
+      </div>
+
+      <div class="loan-info">
+        <p class="loan-title">{{ r.bookTitle }}</p>
+        <p class="loan-rank">{{ rankLabel(r.rankWaitingList) }} en file d'attente</p>
+        <p class="loan-meta">Réservé le {{ r.reservationDate | slice:0:10 }}</p>
+      </div>
+
+      <div class="loan-actions">
+        @if (r.status === 'EN_ATTENTE') {
+        <button class="btn-cancel" (click)="cancelReservation(r.id)">Annuler</button>
+        }
+
+        <span class="status-badge"
+          [class.status-badge--attente]="r.status === 'EN_ATTENTE'"
+          [class.status-badge--disponible]="r.status === 'DISPONIBLE'"
+          [class.status-badge--retard]="r.status === 'ANNULEE'">
+          {{ reservationStatusLabel(r.status) }}
+        </span>
+      </div>
+    </div>
+    }
+  </div>
+  }
+
+  }
+
+</div>

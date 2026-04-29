@@ -280,3 +280,72 @@
   font-family: var(--font-sans, 'Inter', sans-serif);
   font-size: 13px;
 }
+
+.home-loans-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.home-loan-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #E5E0D6);
+  border-radius: 10px;
+}
+
+.home-loan-item--late {
+  border-color: #f87171;
+  background: #fff7f7;
+}
+
+.home-loan-cover {
+  flex-shrink: 0;
+  --cover-width: 38px;
+  --cover-height: 56px;
+}
+
+.home-loan-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.home-loan-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-ink, #1E1E2D);
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.home-loan-author {
+  font-size: 12px;
+  color: var(--color-text-secondary, #5C5B6B);
+  margin: 0 0 2px;
+}
+
+.home-loan-date {
+  font-size: 11.5px;
+  color: var(--color-text-muted, #8A8898);
+  margin: 0;
+}
+
+.home-loan-badge {
+  flex-shrink: 0;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: #e6f2ee;
+  color: var(--color-green-dark, #1F5D4E);
+}
+
+.home-loan-badge--late {
+  background: #fee2e2;
+  color: #b91c1c;
+}
