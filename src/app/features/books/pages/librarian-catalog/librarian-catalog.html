@@ -1,0 +1,414 @@
+<div class="page">
+  <!-- En-tête -->
+  <div class="page-header">
+    <div class="breadcrumb">
+      ACCUEIL <span class="breadcrumb-sep">/</span> GESTION DU CATALOGUE
+    </div>
+    <div class="title-row">
+      <div>
+        <div class="title-with-badge">
+          <h1 class="page-title">Gestion du catalogue</h1>
+          <span class="role-badge">Libraire</span>
+        </div>
+        @if (stats(); as s) {
+        <p class="page-subtitle">
+          {{ s.totalTitres }} titres · {{ s.totalExemplaires }} exemplaires · {{
+          s.enPret }} prêts actifs
+        </p>
+        } @else {
+        <p class="page-subtitle">
+          <strong>{{ totalCount() }}</strong>
+          {{ totalCount() > 1 ? 'titres trouvés' : 'titre trouvé' }}
+        </p>
+        }
+      </div>
+      <div class="header-actions">
+        <!-- <button class="btn btn--secondary" type="button">
+          <app-icon name="download" [size]="15" /> Exporter
+        </button> -->
+        <button class="btn btn--accent" type="button" (click)="openCreate()">
+          <app-icon name="plus" [size]="15" /> Ajouter un livre
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistiques (toujours affichées) -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-value stat-value--green">
+        {{ stats()?.totalExemplaires ?? '—' }}
+      </div>
+      <div class="stat-label">Exemplaires totaux</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value stat-value--success">
+        {{ stats()?.disponibles ?? '—' }}
+      </div>
+      <div class="stat-label">Disponibles</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value stat-value--amber">
+        {{ stats()?.enPret ?? '—' }}
+      </div>
+      <div class="stat-label">En prêt</div>
+    </div>
+  </div>
+
+  <!-- Tableau principal -->
+  <div class="table-card">
+    <!-- Toolbar : onglets catégorie + recherche -->
+    <div class="table-toolbar">
+      <div class="cat-tabs">
+        @for (cat of filterCategories(); track cat) {
+        <button
+          class="cat-tab"
+          [class.cat-tab--active]="activeCategory() === cat"
+          (click)="setCategory(cat)"
+          type="button"
+        >
+          {{ cat }}
+        </button>
+        }
+      </div>
+      <div class="search-box">
+        <app-icon name="search" [size]="16" class="search-icon" />
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Rechercher par titre, auteur, ISBN…"
+          (input)="setSearch($event)"
+        />
+      </div>
+    </div>
+
+    <!-- En-tête du tableau -->
+    <div class="table-head">
+      <div class="col-cover"></div>
+      <div class="col-title">Titre</div>
+      <div class="col-author">Auteur</div>
+      <div class="col-year">Année</div>
+      <div class="col-copies">Exempl.</div>
+      <div class="col-avail">Dispo.</div>
+      <div class="col-actions">Actions</div>
+    </div>
+
+    <!-- Lignes -->
+    @if (books().length === 0) {
+    <p class="no-results">Aucun livre ne correspond à ces critères.</p>
+    } @for (book of books(); track book.key; let last = $last) {
+    <div class="table-row" [class.table-row--last]="last">
+      <div class="col-cover">
+        <app-book-cover
+          [book]="book"
+          style="--cover-width: 30px; --cover-height: 43px"
+        />
+      </div>
+      <div class="col-title">
+        <div class="book-title">{{ book.title }}</div>
+        <div class="book-id">ID {{ book.key }}</div>
+      </div>
+      <div class="col-author">{{ book.author }}</div>
+      <div class="col-year">{{ book.year ?? '—' }}</div>
+      <div class="col-copies">{{ book.totalCopies ?? '—' }}</div>
+      <div class="col-avail">
+        @if (book.totalCopies) {
+        <div
+          class="avail-text"
+          [class.avail-text--none]="book.availableCopies === 0"
+        >
+          {{ book.availableCopies }} / {{ book.totalCopies }}
+        </div>
+        <div class="avail-bar">
+          <div
+            class="avail-bar-fill"
+            [class.avail-bar-fill--none]="book.availableCopies === 0"
+            [style.width.%]="availableRatio(book)"
+          ></div>
+        </div>
+        } @else { — }
+      </div>
+      <div class="col-actions">
+        <button
+          class="action-btn"
+          type="button"
+          title="Modifier"
+          (click)="openEdit(book)"
+        >
+          <app-icon name="edit" [size]="13" />
+        </button>
+        <button
+          class="action-btn action-btn--danger"
+          type="button"
+          title="Supprimer"
+          (click)="confirmDelete(book.key)"
+        >
+          <app-icon name="x" [size]="13" />
+        </button>
+        <a
+          class="action-btn"
+          [routerLink]="['/book', book.key]"
+          title="Voir le détail"
+        >
+          <app-icon name="chevron-right" [size]="13" />
+        </a>
+      </div>
+    </div>
+    }
+
+    <!-- Pagination -->
+    @if (totalPages() > 1) {
+    <div class="pagination">
+      <button
+        class="page-btn"
+        (click)="prevPage()"
+        [disabled]="currentPage() === 1"
+      >
+        ‹
+      </button>
+      @for (p of paginationPages(); track $index) {
+      <button
+        class="page-btn"
+        [class.page-btn--active]="p === currentPage()"
+        [class.page-btn--ellipsis]="p === '…'"
+        [disabled]="p === '…'"
+        (click)="goToPage(p)"
+      >
+        {{ p }}
+      </button>
+      }
+      <button
+        class="page-btn"
+        (click)="nextPage()"
+        [disabled]="currentPage() === totalPages()"
+      >
+        ›
+      </button>
+    </div>
+    }
+  </div>
+</div>
+
+<!-- ── Modal ajout / édition ──────────────────────────────────── -->
+@if (showModal()) {
+<div class="overlay" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">
+        {{ editingBook() ? 'Modifier le livre' : 'Ajouter un livre' }}
+      </h2>
+      <button class="modal-close" type="button" (click)="closeModal()">
+        <app-icon name="x" [size]="18" />
+      </button>
+    </div>
+
+    @if (modalLoading()) {
+    <div class="modal-loading">Chargement…</div>
+    } @else {
+    <form class="modal-form" (submit)="submitForm(); $event.preventDefault()">
+      <!-- Recherche OpenLibrary — uniquement à la création -->
+      @if (!editingBook()) {
+      <div class="isbn-lookup">
+        <div class="isbn-lookup-row">
+          <div class="isbn-lookup-field">
+            <label class="form-label"
+              >ISBN <span class="required">*</span></label
+            >
+            <input
+              type="text"
+              class="form-input"
+              placeholder="ex. 9780201616224"
+              [value]="formIsbn()"
+              (input)="formIsbn.set($any($event.target).value)"
+              required
+            />
+          </div>
+          <button
+            type="button"
+            class="btn btn--lookup"
+            [disabled]="!formIsbn().trim() || isbnLookupLoading()"
+            (click)="lookupIsbn()"
+          >
+            @if (isbnLookupLoading()) { Recherche… } @else {
+            <app-icon name="search" [size]="14" /> Récupérer les données }
+          </button>
+        </div>
+        @if (isbnLookupError()) {
+        <div class="isbn-lookup-error">{{ isbnLookupError() }}</div>
+        }
+      </div>
+      }
+
+      <div class="form-grid">
+        @if (editingBook()) {
+        <div class="form-group">
+          <label class="form-label">ISBN <span class="required">*</span></label>
+          <input
+            type="text"
+            class="form-input"
+            [value]="formIsbn()"
+            (input)="formIsbn.set($any($event.target).value)"
+            required
+          />
+        </div>
+        }
+
+        <div class="form-group form-group--full">
+          <label class="form-label"
+            >Titre <span class="required">*</span></label
+          >
+          <input
+            type="text"
+            class="form-input"
+            [value]="formTitre()"
+            (input)="formTitre.set($any($event.target).value)"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"
+            >Auteur <span class="required">*</span></label
+          >
+          <input
+            type="text"
+            class="form-input"
+            [value]="formAuteur()"
+            (input)="formAuteur.set($any($event.target).value)"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"
+            >Catégorie <span class="required">*</span></label
+          >
+          <select
+            class="form-input"
+            [value]="formCategorieId()"
+            (change)="formCategorieId.set(+$any($event.target).value)"
+            required
+          >
+            <option [value]="0">— Choisir —</option>
+            @for (cat of categoryOptions(); track cat.id) {
+            <option [value]="cat.id" [selected]="formCategorieId() === cat.id">
+              {{ cat.nom }}
+            </option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"
+            >Date de parution <span class="required">*</span></label
+          >
+          <input
+            type="date"
+            class="form-input"
+            [value]="formDateParution()"
+            (input)="formDateParution.set($any($event.target).value)"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"
+            >Nombre de pages <span class="required">*</span></label
+          >
+          <input
+            type="number"
+            class="form-input"
+            [value]="formNombrePages()"
+            (input)="formNombrePages.set(+$any($event.target).value)"
+            min="1"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"
+            >Exemplaires <span class="required">*</span></label
+          >
+          <input
+            type="number"
+            class="form-input"
+            [value]="formTotalExemplaires()"
+            (input)="formTotalExemplaires.set(+$any($event.target).value)"
+            min="1"
+            required
+          />
+        </div>
+
+        <div class="form-group form-group--full">
+          <label class="form-label">URL de la couverture</label>
+          <input
+            type="url"
+            class="form-input"
+            [value]="formUrlCouverture()"
+            (input)="formUrlCouverture.set($any($event.target).value)"
+            placeholder="https://…"
+          />
+        </div>
+
+        <div class="form-group form-group--full">
+          <label class="form-label"
+            >Description <span class="required">*</span></label
+          >
+          <textarea
+            class="form-input form-textarea"
+            [value]="formDescription()"
+            (input)="formDescription.set($any($event.target).value)"
+            rows="4"
+            required
+          >
+          </textarea>
+        </div>
+      </div>
+
+      @if (formError()) {
+      <div class="form-error">{{ formError() }}</div>
+      }
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn--secondary" (click)="closeModal()">
+          Annuler
+        </button>
+        <button type="submit" class="btn btn--accent" [disabled]="submitting()">
+          {{ submitting() ? 'Enregistrement…' : (editingBook() ? 'Enregistrer' :
+          'Ajouter') }}
+        </button>
+      </div>
+    </form>
+    }
+  </div>
+</div>
+}
+
+<!-- ── Confirmation de suppression ────────────────────────────── -->
+@if (deletingId() !== null) {
+<div class="overlay" (click)="cancelDelete()">
+  <div class="modal modal--sm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Supprimer le livre</h2>
+      <button class="modal-close" type="button" (click)="cancelDelete()">
+        <app-icon name="x" [size]="18" />
+      </button>
+    </div>
+    <p class="delete-warning">
+      Cette action est irréversible. Êtes-vous sûr de vouloir supprimer ce livre
+      et tous ses exemplaires ?
+    </p>
+    @if (deleteError()) {
+    <div class="form-error">{{ deleteError() }}</div>
+    }
+    <div class="modal-actions">
+      <button type="button" class="btn btn--secondary" (click)="cancelDelete()">
+        Annuler
+      </button>
+      <button type="button" class="btn btn--danger" (click)="executeDelete()">
+        Supprimer
+      </button>
+    </div>
+  </div>
+</div>
+}
