@@ -1,16 +1,37 @@
-import { Component, input } from '@angular/core';
+import { Component, input } from "@angular/core";
 
 export type IconName =
-  | 'home' | 'catalog' | 'borrow' | 'settings' | 'logout'
-  | 'search' | 'bell' | 'profile' | 'heart' | 'history'
-  | 'bookmark' | 'clock' | 'star' | 'plus' | 'users'
-  | 'book' | 'chevron-right' | 'chevron-down' | 'arrow-right' | 'check'
-  | 'grid' | 'list' | 'share';
+  | "home"
+  | "catalog"
+  | "borrow"
+  | "settings"
+  | "logout"
+  | "search"
+  | "bell"
+  | "profile"
+  | "heart"
+  | "history"
+  | "bookmark"
+  | "clock"
+  | "star"
+  | "plus"
+  | "users"
+  | "book"
+  | "chevron-right"
+  | "chevron-down"
+  | "arrow-right"
+  | "check"
+  | "grid"
+  | "list"
+  | "share"
+  | "download"
+  | "x"
+  | "edit";
 
 @Component({
-  selector: 'app-icon',
-  templateUrl: './icon.html',
-  host: { '[style.display]': '"contents"' },
+  selector: "app-icon",
+  templateUrl: "./icon.html",
+  host: { "[style.display]": '"contents"' },
 })
 export class IconComponent {
   name = input.required<IconName>();
