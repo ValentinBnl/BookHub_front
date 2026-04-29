@@ -6,6 +6,7 @@ import { IconComponent, type IconName } from '../../../../shared/components/icon
 import { BooksService } from '../../../books/books.service';
 import type { BookSummary, Book, BookStatus } from '../../../../shared/models/book.model';
 import { BookCardComponent } from '../../../books/components/book-card/book-card';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 interface StatCard {
   icon: IconName;
@@ -22,7 +23,9 @@ interface StatCard {
 export class Home {
   private booksService = inject(BooksService);
   private destroyRef = inject(DestroyRef);
+  private authService = inject(AuthService);
 
+  readonly firstName = this.authService.firstName;
   readonly loading = signal(true);
   readonly books = signal<BookSummary[]>([]);
   readonly booksForDetails = computed<Book[]>(() =>

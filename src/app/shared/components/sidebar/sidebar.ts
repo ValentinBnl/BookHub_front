@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../../core/auth/auth.service';
 import { IconComponent, type IconName } from '../icon/icon';
 
 interface NavItem {
@@ -16,6 +17,12 @@ interface NavItem {
   styleUrl: './sidebar.css',
 })
 export class SidebarComponent {
+  private readonly authService = inject(AuthService);
+
+  readonly displayName = this.authService.displayName;
+  readonly initials = this.authService.initials;
+  readonly memberSinceLabel = this.authService.memberSinceLabel;
+
   navItems: NavItem[] = [
     { label: 'Accueil',      route: '/home',    icon: 'home' },
     { label: 'Catalogue',    route: '/catalog', icon: 'catalog' },
