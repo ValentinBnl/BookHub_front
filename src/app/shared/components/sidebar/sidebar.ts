@@ -4,12 +4,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
 import { IconComponent, type IconName } from '../icon/icon';
 import { LoansService } from '../../../features/loans/loans.service';
+import { AuthService } from '../../../core/auth/auth.service';
 
 interface NavItem {
   label: string;
   route: string;
   icon: IconName;
   count?: number;
+  roles?: string[];
 }
 
 @Component({
@@ -21,14 +23,27 @@ interface NavItem {
 export class SidebarComponent {
   private loansService = inject(LoansService);
   private destroyRef = inject(DestroyRef);
+  private readonly authService = inject(AuthService);
+
+  readonly displayName = this.authService.displayName;
+  readonly initials = this.authService.initials;
+  readonly memberSinceLabel = this.authService.memberSinceLabel;
 
   readonly loanCount = signal<number | undefined>(undefined);
 
-  readonly navItems = computed<NavItem[]>(() => [
-    { label: 'Accueil',      route: '/home',    icon: 'home' },
-    { label: 'Catalogue',    route: '/catalog', icon: 'catalog' },
-    { label: 'Mes emprunts', route: '/loans',   icon: 'borrow', count: this.loanCount() },
-  ]);
+  private readonly allNavItems: NavItem[] = [
+    { label: 'Accueil',           route: '/home',              icon: 'home' },
+    { label: 'Catalogue',         route: '/catalog',           icon: 'catalog' },
+    { label: 'Mes emprunts',      route: '/loans',             icon: 'borrow' },
+    { label: 'Gestion catalogue', route: '/librarian-catalog', icon: 'book', roles: ['LIBRAIRE'] },
+  ];
+
+  navItems = computed<NavItem[]>(() => {
+    const role = this.authService.currentUser()?.role ?? '';
+    return this.allNavItems
+      .filter(item => !item.roles || item.roles.includes(role))
+      .map(item => item.route === '/loans' ? { ...item, count: this.loanCount() } : item);
+  });
 
   readonly bottomItems: NavItem[] = [
     { label: 'Paramètres',  route: '/settings', icon: 'settings' },

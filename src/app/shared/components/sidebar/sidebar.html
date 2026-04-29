@@ -42,10 +42,10 @@
 
   <!-- Profil utilisateur -->
   <div class="user-card">
-    <div class="avatar">AG</div>
+    <div class="avatar">{{ initials() }}</div>
     <div class="user-info">
-      <div class="user-name">Alex Garcia</div>
-      <div class="user-role">Membre · depuis 2023</div>
+      <div class="user-name">{{ displayName() }}</div>
+      <div class="user-role">{{ memberSinceLabel() }}</div>
     </div>
   </div>
 </aside>

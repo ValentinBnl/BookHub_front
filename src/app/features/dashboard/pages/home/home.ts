@@ -10,6 +10,7 @@ import type { Loan } from '../../../../shared/models/loan.model';
 import { BookCardComponent } from '../../../books/components/book-card/book-card';
 import { BookCoverComponent } from '../../../../shared/components/book-cover/book-cover';
 import { DatePipe } from '@angular/common';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 interface StatCard {
   icon: IconName;
@@ -27,7 +28,9 @@ export class Home {
   private booksService = inject(BooksService);
   private loansService = inject(LoansService);
   private destroyRef = inject(DestroyRef);
+  private authService = inject(AuthService);
 
+  readonly firstName = this.authService.firstName;
   readonly loading = signal(true);
   readonly books = signal<BookSummary[]>([]);
   readonly activeLoans = signal<Loan[]>([]);

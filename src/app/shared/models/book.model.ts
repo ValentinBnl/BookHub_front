@@ -1,4 +1,4 @@
-export type BookStatus = 'available' | 'borrowed' | 'upcoming' | 'late';
+export type BookStatus = "available" | "borrowed" | "upcoming" | "late";
 
 export interface Book {
   key: string;
@@ -8,6 +8,27 @@ export interface Book {
   status: BookStatus;
   coverUrl?: string;
   year?: number;
+  totalCopies?: number;
+  availableCopies?: number;
+}
+
+export interface BookFormData {
+  titre: string;
+  auteur: string;
+  isbn: string;
+  description: string;
+  dateParution: string;
+  nombrePages: number;
+  urlCouverture: string;
+  totalExemplaires: number;
+  categorieId: number;
+}
+
+export interface BookStats {
+  totalTitres: number;
+  totalExemplaires: number;
+  disponibles: number;
+  enPret: number;
 }
 
 export interface BookSummary {
@@ -40,4 +61,5 @@ export interface BookDetail {
   totalExemplaires: number;
   exemplairesDisponibles: number;
   categorie: string;
+  categorieId?: number;
 }

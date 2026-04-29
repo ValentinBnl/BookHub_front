@@ -1,64 +1,80 @@
-import { Routes } from '@angular/router';
-import { LayoutComponent } from './shared/components/layout/layout';
+import { Routes } from "@angular/router";
+import { LayoutComponent } from "./shared/components/layout/layout";
+import { roleGuard } from "./core/auth/role.guard";
 
 export const routes: Routes = [
   // ROUTES AUTH (login / register)
   {
-    path: 'auth',
+    path: "auth",
     loadComponent: () =>
-        import('./shared/layout/auth-layout/auth-layout')
-            .then((m) => m.AuthLayout),
+      import("./shared/layout/auth-layout/auth-layout").then(
+        (m) => m.AuthLayout,
+      ),
     children: [
       {
-        path: 'login',
+        path: "login",
         loadComponent: () =>
-            import('./features/auth/pages/login/login')
-                .then((m) => m.Login),
+          import("./features/auth/pages/login/login").then((m) => m.Login),
       },
       {
-        path: 'register',
+        path: "register",
         loadComponent: () =>
-            import('./features/auth/pages/register/register')
-                .then((m) => m.Register),
+          import("./features/auth/pages/register/register").then(
+            (m) => m.Register,
+          ),
       },
       {
-        path: '',
-        redirectTo: 'login',
-        pathMatch: 'full',
+        path: "",
+        redirectTo: "login",
+        pathMatch: "full",
       },
     ],
   },
 
   // ROUTES APP (avec layout principal)
   {
-    path: '',
+    path: "",
     component: LayoutComponent,
     children: [
-      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path: "", redirectTo: "home", pathMatch: "full" },
       {
-        path: 'home',
+        path: "home",
         loadComponent: () =>
-            import('./features/dashboard/pages/home/home').then((m) => m.Home),
+          import("./features/dashboard/pages/home/home").then((m) => m.Home),
       },
       {
-        path: 'catalog',
+        path: "catalog",
         loadComponent: () =>
-            import('./features/books/pages/catalog/catalog').then((m) => m.Catalog),
+          import("./features/books/pages/catalog/catalog").then(
+            (m) => m.Catalog,
+          ),
       },
       {
-        path: 'loans',
+        path: "loans",
         loadComponent: () =>
-            import('./features/loans/pages/my-loans/my-loans').then((m) => m.MyLoans),
+          import("./features/loans/pages/my-loans/my-loans").then(
+            (m) => m.MyLoans,
+          ),
       },
       {
-        path: 'book/:id',
+        path: "book/:id",
         loadComponent: () =>
-          import('./features/books/pages/book-detail/book-detail').then((m) => m.BookDetail),
+          import("./features/books/pages/book-detail/book-detail").then(
+            (m) => m.BookDetail,
+          ),
+      },
+      {
+        path: "librarian-catalog",
+        canActivate: [roleGuard("LIBRAIRE")],
+        loadComponent: () =>
+          import(
+            "./features/books/pages/librarian-catalog/librarian-catalog"
+          ).then((m) => m.LibrarianCatalog),
       },
       { path: 'reservations', redirectTo: 'loans', pathMatch: 'full' },
     ],
   },
 
   // fallback
-  { path: '**', redirectTo: 'home' },
+  { path: "**", redirectTo: "home" },
 ];
