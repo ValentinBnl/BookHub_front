@@ -54,8 +54,15 @@ export class AuthService {
     return initials || user?.email?.charAt(0).toUpperCase() || 'M';
   });
   readonly memberSinceLabel = computed(() => {
-    const year = this.userProfile()?.dateCreation?.match(/\d{4}/)?.[0];
-    return year ? `Membre · depuis ${year}` : 'Membre';
+    const user = this.userProfile();
+    const year = user?.dateCreation?.match(/\d{4}/)?.[0];
+    const roleLabels: Record<string, string> = {
+      LIBRAIRE: 'Libraire',
+      ADMIN: 'Administrateur',
+      UTILISATEUR: 'Membre',
+    };
+    const roleLabel = (user?.role && roleLabels[user.role]) ?? 'Membre';
+    return year ? `${roleLabel} · depuis ${year}` : roleLabel;
   });
 
   login(payload: LoginRequest) {

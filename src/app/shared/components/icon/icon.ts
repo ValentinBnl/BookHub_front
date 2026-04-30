@@ -7,7 +7,6 @@ export type IconName =
   | "settings"
   | "logout"
   | "search"
-  | "bell"
   | "profile"
   | "heart"
   | "history"
