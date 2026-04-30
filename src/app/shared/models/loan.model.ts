@@ -8,3 +8,9 @@ export interface Loan {
   dateRetourPrevue: string;
   statut: 'EN COURS' | 'RENDU' | 'EN RETARD';
 }
+
+export interface LibrarianLoan extends Loan {
+  userId: number;
+  nom: string;
+  prenom: string;
+}
