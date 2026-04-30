@@ -11,6 +11,7 @@ import { BookCardComponent } from '../../../books/components/book-card/book-card
 import { BookCoverComponent } from '../../../../shared/components/book-cover/book-cover';
 import { DatePipe } from '@angular/common';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { LibrarianHome } from '../../../librarian/pages/librarian-home/librarian-home';
 
 interface StatCard {
   icon: IconName;
@@ -20,7 +21,7 @@ interface StatCard {
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, IconComponent, BookCardComponent, BookCoverComponent, DatePipe],
+  imports: [RouterLink, IconComponent, BookCardComponent, BookCoverComponent, DatePipe, LibrarianHome],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -30,6 +31,7 @@ export class Home {
   private destroyRef = inject(DestroyRef);
   private authService = inject(AuthService);
 
+  readonly isLibraire = computed(() => this.authService.currentUser()?.role === 'LIBRAIRE');
   readonly firstName = this.authService.firstName;
   readonly loading = signal(true);
   readonly books = signal<BookSummary[]>([]);
@@ -56,6 +58,8 @@ export class Home {
 
   constructor() {
     afterNextRender(() => {
+      if (this.isLibraire()) return;
+
       forkJoin({
         books: this.booksService.getAll(0, 5).pipe(catchError(() => of(null))),
         loans: this.loansService.getMyLoans().pipe(catchError(() => of([]))),

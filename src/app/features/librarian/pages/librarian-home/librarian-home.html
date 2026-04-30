@@ -1,0 +1,153 @@
+<div class="comptoir-page">
+
+  <div class="comptoir-header">
+    <div>
+      <h1 class="comptoir-title">
+        Comptoir du jour
+        <span class="libraire-badge">Libraire</span>
+      </h1>
+      <p class="comptoir-date">{{ today }}</p>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value">{{ statsLoansToday() }}</div>
+      <div class="stat-label">Prêts aujourd'hui</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">–</div>
+      <div class="stat-label">Retours</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{ statsPending() }}</div>
+      <div class="stat-label">Réservations</div>
+    </div>
+    <div class="stat-card stat-card--alert">
+      <div class="stat-value">{{ statsLate() }}</div>
+      <div class="stat-label">Retard</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">–</div>
+      <div class="stat-label">Nouveaux membres</div>
+    </div>
+  </div>
+
+  <div class="comptoir-body">
+
+    <section class="loans-section">
+      <div class="loans-header">
+        <h2 class="section-title">Prêts actifs ({{ activeLoans().length }})</h2>
+        <div class="tab-group">
+          <button class="tab" [class.tab--active]="activeTab() === 'all'" (click)="activeTab.set('all')">Tous</button>
+          <button class="tab" [class.tab--active]="activeTab() === 'active'" (click)="activeTab.set('active')">En cours</button>
+          <button class="tab tab--late" [class.tab--active]="activeTab() === 'late'" (click)="activeTab.set('late')">Retard</button>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <div class="table-loading">
+          @for (_ of [1,2,3]; track $index) {
+            <div class="row-skeleton"></div>
+          }
+        </div>
+      } @else if (filteredLoans().length === 0) {
+        <p class="empty-state">Aucun prêt correspondant.</p>
+      } @else {
+        <div class="table-wrapper">
+          <table class="loans-table">
+            <thead>
+              <tr>
+                <th>Livre</th>
+                <th>Membre</th>
+                <th>Retour</th>
+                <th>État</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (loan of filteredLoans(); track loan.id) {
+                <tr [class.row--late]="loan.statut === 'EN RETARD'">
+                  <td>
+                    <div class="cell-book">
+                      <div class="book-cover-sm">
+                        <app-book-cover [book]="toLoanBook(loan)" />
+                      </div>
+                      <div>
+                        <p class="book-title">{{ loan.titre }}</p>
+                        <p class="book-author">{{ loan.auteur }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="cell-member">
+                      <div class="member-avatar">{{ userInitials(loan) }}</div>
+                      <span class="member-name">{{ userFullName(loan) }}</span>
+                    </div>
+                  </td>
+                  <td class="cell-date" [class.cell-date--late]="loan.statut === 'EN RETARD'">
+                    {{ formatShortDate(loan.dateRetourPrevue) }}
+                  </td>
+                  <td>
+                    <span class="status-badge"
+                      [class.status-badge--cours]="loan.statut === 'EN COURS'"
+                      [class.status-badge--retard]="loan.statut === 'EN RETARD'">
+                      {{ loan.statut === 'EN RETARD' ? 'En retard' : 'En cours' }}
+                    </span>
+                  </td>
+                  <td>
+                    <button class="btn-retour" (click)="returnLoan(loan.id)">Retour</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+
+    <aside class="comptoir-aside">
+
+      <section class="aside-section">
+        <h3 class="aside-title">Réservations à préparer</h3>
+        @if (pendingReservations().length === 0) {
+          <p class="empty-state">Aucune réservation en attente.</p>
+        } @else {
+          @for (r of pendingReservations(); track r.id) {
+            <div class="reservation-card">
+              <div class="reservation-cover">
+                <app-book-cover [book]="toReservationBook(r)" />
+              </div>
+              <div class="reservation-info">
+                <p class="reservation-title">{{ r.bookTitle }}</p>
+                <p class="reservation-member">pour {{ r.userName }}</p>
+                <p class="reservation-date">Réservé le {{ r.reservationDate | slice:0:10 }}</p>
+              </div>
+              <button class="btn-prepare" (click)="validateReservation(r.id)">Préparer</button>
+            </div>
+          }
+        }
+      </section>
+
+      <section class="aside-section">
+        <h3 class="aside-title">Entrées récentes</h3>
+        @if (recentActivity().length === 0) {
+          <p class="empty-state">Aucune activité récente.</p>
+        } @else {
+          <ul class="activity-list">
+            @for (loan of recentActivity(); track loan.id) {
+              <li class="activity-item">
+                <span class="activity-dot activity-dot--pret"></span>
+                <span class="activity-time">{{ formatTime(loan.dateEmprunt) }}</span>
+                <span class="activity-type">Prêt</span>
+                <span class="activity-desc">{{ loan.titre }} — {{ userFullName(loan) }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+    </aside>
+  </div>
+
+</div>

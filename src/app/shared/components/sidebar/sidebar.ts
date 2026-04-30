@@ -12,6 +12,7 @@ interface NavItem {
   icon: IconName;
   count?: number;
   roles?: string[];
+  notRoles?: string[];
 }
 
 @Component({
@@ -33,15 +34,16 @@ export class SidebarComponent {
 
   private readonly allNavItems: NavItem[] = [
     { label: 'Accueil',           route: '/home',              icon: 'home' },
-    { label: 'Catalogue',         route: '/catalog',           icon: 'catalog' },
-    { label: 'Mes emprunts',      route: '/loans',             icon: 'borrow' },
-    { label: 'Gestion catalogue', route: '/librarian-catalog', icon: 'book', roles: ['LIBRAIRE'] },
+    { label: 'Catalogue',         route: '/catalog',           icon: 'catalog',  notRoles: ['LIBRAIRE'] },
+    { label: 'Mes emprunts',      route: '/loans',             icon: 'borrow',   notRoles: ['LIBRAIRE'] },
+    { label: 'Gestion catalogue', route: '/librarian-catalog', icon: 'book',     roles: ['LIBRAIRE'] },
   ];
 
   navItems = computed<NavItem[]>(() => {
     const role = this.authService.currentUser()?.role ?? '';
     return this.allNavItems
       .filter(item => !item.roles || item.roles.includes(role))
+      .filter(item => !item.notRoles || !item.notRoles.includes(role))
       .map(item => item.route === '/loans' ? { ...item, count: this.loanCount() } : item);
   });
 
